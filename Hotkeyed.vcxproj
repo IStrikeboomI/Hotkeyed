@@ -128,13 +128,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\hotkey\Hotkey.cpp" />
     <ClCompile Include="src\device\Device.cpp" />
     <ClCompile Include="src\device\DeviceManager.cpp" />
+    <ClCompile Include="src\hotkey\Key.h" />
     <ClCompile Include="src\windows\Interceptor.cpp" />
     <ClCompile Include="src\device\Keyboard.cpp" />
     <ClCompile Include="src\Hotkeyed.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\hotkey\Hotkey.h" />
     <ClInclude Include="src\device\Device.h" />
     <ClInclude Include="src\device\DeviceManager.h" />
     <ClInclude Include="src\windows\Interceptor.h" />

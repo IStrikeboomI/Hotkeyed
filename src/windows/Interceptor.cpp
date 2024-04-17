@@ -20,8 +20,6 @@ void handleInput(MSG msg) {
 }
 Interceptor::Interceptor() {
 	WNDCLASS wc = { 0 };
-	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
-	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wc.hInstance = GetModuleHandle(nullptr);
 	wc.lpszClassName = L"hotkeyed";
 	wc.lpfnWndProc = windowProcedure;
