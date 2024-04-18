@@ -13,7 +13,7 @@ Device::Device(unsigned int id, std::string deviceInterfaceName, std::wstring pr
 std::wostream& operator<<(std::wostream& out, const Device& c) {
 	out << "["
 		<< "id = " << c.id
-		<< "deviceInterfaceName = " << c.deviceInterfaceName.c_str()
+		<< ", deviceInterfaceName = " << c.deviceInterfaceName.c_str()
 		<< ", productName=" << c.productName
 		<< ", manufacturerName=" << c.manufacturerName
 		<< ", type=" << c.type

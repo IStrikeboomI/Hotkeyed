@@ -36,6 +36,9 @@
     <ClCompile Include="src\hotkey\Key.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\hotkey\HotkeyManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\device\Keyboard.h">
@@ -51,6 +54,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\hotkey\Hotkey.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hotkey\HotkeyManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hotkey\DeviceKey.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hotkey\DeviceKeys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

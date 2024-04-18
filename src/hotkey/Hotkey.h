@@ -3,12 +3,11 @@
 #include <functional>
 #include "Key.h"
 #include "../device/Keyboard.h"
-class Hotkey {
-public:
+struct Hotkey {
 	std::vector<Key> keys;
-	std::function<void> callback;
+	std::function<void()> callback;
 
-	Hotkey(std::vector<Key> keys, std::function<void> callback);
-	bool executeIfValid(Keyboard keyboard, Key key);
+	Hotkey(std::vector<Key>& keys, std::function<void()> callback) : keys(keys), callback(callback) {}
+																					
 };
 

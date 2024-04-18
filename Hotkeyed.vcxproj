@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\hotkey\HotkeyManager.cpp" />
     <ClCompile Include="src\hotkey\Hotkey.cpp" />
     <ClCompile Include="src\device\Device.cpp" />
     <ClCompile Include="src\device\DeviceManager.cpp" />
@@ -137,9 +138,12 @@
     <ClCompile Include="src\Hotkeyed.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\hotkey\HotkeyManager.h" />
     <ClInclude Include="src\hotkey\Hotkey.h" />
     <ClInclude Include="src\device\Device.h" />
     <ClInclude Include="src\device\DeviceManager.h" />
+    <ClInclude Include="src\hotkey\DeviceKey.h" />
+    <ClInclude Include="src\hotkey\DeviceKeys.h" />
     <ClInclude Include="src\windows\Interceptor.h" />
     <ClInclude Include="src\device\Keyboard.h" />
   </ItemGroup>
