@@ -128,6 +128,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\hotkey\action\Action.cpp" />
+    <ClCompile Include="src\hotkey\action\ActionManager.cpp" />
+    <ClCompile Include="src\hotkey\action\MoveMouse.cpp" />
     <ClCompile Include="src\hotkey\HotkeyManager.cpp" />
     <ClCompile Include="src\hotkey\Hotkey.cpp" />
     <ClCompile Include="src\device\Device.cpp" />
@@ -138,6 +141,10 @@
     <ClCompile Include="src\Hotkeyed.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\hotkey\action\ActionManager.h" />
+    <ClInclude Include="src\hotkey\action\MoveMouse.h" />
+    <ClInclude Include="src\hotkey\action\Action.h" />
+    <ClInclude Include="src\hotkey\action\Parameter.h" />
     <ClInclude Include="src\hotkey\HotkeyManager.h" />
     <ClInclude Include="src\hotkey\Hotkey.h" />
     <ClInclude Include="src\device\Device.h" />
