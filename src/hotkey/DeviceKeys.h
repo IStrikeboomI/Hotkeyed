@@ -18,8 +18,8 @@ namespace DeviceKeys {
 		return key;
 	}
 
-	static DeviceKey LBUTTON = add(DeviceKey(VK_LBUTTON,{"LButton","Left Key", "Left Click"}));
-	static DeviceKey RBUTTON = add(DeviceKey(VK_RBUTTON, { "RButton","Right Key", "Right Click" }));
+	static const DeviceKey LBUTTON = add(DeviceKey(VK_LBUTTON,{"LButton","Left Key", "Left Click"}));
+	static const DeviceKey RBUTTON = add(DeviceKey(VK_RBUTTON, { "RButton","Right Key", "Right Click" }));
 
 	//Gets device key by case insensitive search 
 	DeviceKey& getByName(const std::string& name) {
@@ -31,5 +31,13 @@ namespace DeviceKeys {
 			}
 		}
 	}
-
+	DeviceKey& getByVKey(const int vKey) {
+		for (std::reference_wrapper<DeviceKey> key : keys) {
+			for (int n : key.get().value) {
+				if (n == vKey) {
+					return key;
+				}
+			}
+		}
+	}
 }

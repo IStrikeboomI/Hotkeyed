@@ -1,7 +1,7 @@
 #include "Interceptor.h"
 LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {return DefWindowProcW(hwnd, msg, wparam, lparam);}
 
-void handleInput(MSG msg) {
+void Interceptor::handleInput(MSG msg) {
 	RAWINPUT input;
 	unsigned int size = sizeof(input);
 	GetRawInputData((HRAWINPUT)msg.lParam, RID_INPUT, &input, &size, sizeof(RAWINPUTHEADER));
@@ -13,12 +13,14 @@ void handleInput(MSG msg) {
 		if (d->deviceInterfaceName == name) {
 			if (d->type == RIM_TYPEKEYBOARD) {
 				Keyboard* keyboard = static_cast<Keyboard*>(d.get());
-				std::wcout << *keyboard << "\n";
+				for (auto callback : keyboardGlobalInterceptors) {
+					callback(*keyboard, input.data.keyboard.Flags == 0 ? DOWN : UP, DeviceKeys::getByVKey(input.data.keyboard.VKey));
+				}
 			}
 		}
 	}
 }
-Interceptor::Interceptor() {
+Interceptor::Interceptor() : keyboardGlobalInterceptors() {
 	WNDCLASS wc = { 0 };
 	wc.hInstance = GetModuleHandle(nullptr);
 	wc.lpszClassName = L"hotkeyed";
