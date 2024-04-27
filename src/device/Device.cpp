@@ -1,6 +1,6 @@
 #include "Device.h"
 
-Device::Device(unsigned int id, std::string deviceInterfaceName, std::wstring productName, std::wstring manufacturerName, HANDLE device, byte type) :
+Device::Device(unsigned int id, const std::string& deviceInterfaceName, const std::wstring& productName, const std::wstring& manufacturerName, const HANDLE& device, const byte type) :
 	id(id),
 	deviceInterfaceName(deviceInterfaceName),
 	productName(productName),

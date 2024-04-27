@@ -131,6 +131,8 @@
     <ClCompile Include="src\hotkey\action\Action.cpp" />
     <ClCompile Include="src\hotkey\action\ActionManager.cpp" />
     <ClCompile Include="src\hotkey\action\MoveMouse.cpp" />
+    <ClCompile Include="src\hotkey\DeviceKey.cpp" />
+    <ClCompile Include="src\hotkey\DeviceKeys.cpp" />
     <ClCompile Include="src\hotkey\HotkeyManager.cpp" />
     <ClCompile Include="src\hotkey\Hotkey.cpp" />
     <ClCompile Include="src\device\Device.cpp" />

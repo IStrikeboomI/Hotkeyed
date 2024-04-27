@@ -1,7 +1,8 @@
 #include "Interceptor.h"
+#include "../hotkey/DeviceKeys.h"
 LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {return DefWindowProcW(hwnd, msg, wparam, lparam);}
 
-void Interceptor::handleInput(MSG msg) {
+void Interceptor::handleInput(const MSG& msg) {
 	RAWINPUT input;
 	unsigned int size = sizeof(input);
 	GetRawInputData((HRAWINPUT)msg.lParam, RID_INPUT, &input, &size, sizeof(RAWINPUTHEADER));
@@ -20,37 +21,38 @@ void Interceptor::handleInput(MSG msg) {
 		}
 	}
 }
-Interceptor::Interceptor() : keyboardGlobalInterceptors() {
-	WNDCLASS wc = { 0 };
+Interceptor::Interceptor() : keyboardGlobalInterceptors(), wc({0}) {
 	wc.hInstance = GetModuleHandle(nullptr);
 	wc.lpszClassName = L"hotkeyed";
 	wc.lpfnWndProc = windowProcedure;
 	wc.lpszMenuName = L"Hotkeyed";
-	if (RegisterClass(&wc)) {
-		//Creates Window
-		HWND hwnd = CreateWindow(wc.lpszClassName, wc.lpszMenuName, 0, 0, 0, 0, 0, nullptr, nullptr, wc.hInstance, nullptr);
+	if (!RegisterClass(&wc)) {
+		throw std::runtime_error("Could not register class");
+	}
+}
 
-		//register raw devices
-		RAWINPUTDEVICE keyboards[1];
-		keyboards[0].usUsagePage = 1;
-		keyboards[0].usUsage = 6;
-		keyboards[0].dwFlags = RIDEV_INPUTSINK;
-		keyboards[0].hwndTarget = hwnd;
-		if (RegisterRawInputDevices(keyboards, 1, sizeof(keyboards[0]))) {
-			//SetWindowsHookExA(WH_KEYBOARD_LL,LowLevelKeyBoardProc,GetModuleHandle(nullptr),0);
-			MSG msg = { nullptr };
+void Interceptor::begin() {
+	//Creates Window
+	HWND hwnd = CreateWindow(wc.lpszClassName, wc.lpszMenuName, 0, 0, 0, 0, 0, nullptr, nullptr, wc.hInstance, nullptr);
 
-			while (GetMessageW(&msg, nullptr, 0, 0)) {
-				TranslateMessage(&msg);
-				DispatchMessageW(&msg);
-				if (msg.message == WM_INPUT) {
-					handleInput(msg);
-				}
+	//register raw devices
+	RAWINPUTDEVICE keyboards[1];
+	keyboards[0].usUsagePage = 1;
+	keyboards[0].usUsage = 6;
+	keyboards[0].dwFlags = RIDEV_INPUTSINK;
+	keyboards[0].hwndTarget = hwnd;
+	if (RegisterRawInputDevices(keyboards, 1, sizeof(keyboards[0]))) {
+		//SetWindowsHookExA(WH_KEYBOARD_LL,LowLevelKeyBoardProc,GetModuleHandle(nullptr),0);
+		MSG msg = { nullptr };
+
+		while (GetMessageW(&msg, nullptr, 0, 0)) {
+			TranslateMessage(&msg);
+			DispatchMessageW(&msg);
+			if (msg.message == WM_INPUT) {
+				handleInput(msg);
 			}
-		} else {
-			throw std::runtime_error("Could not register devices");
 		}
 	} else {
-		throw std::runtime_error("Could not register class");
+		throw std::runtime_error("Could not register devices");
 	}
 }

@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <Windows.h>
 #include <Winuser.h>
 #include <cctype>
 #include <algorithm>
@@ -11,9 +12,9 @@
 
 //https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 namespace DeviceKeys {
-	static std::vector<std::reference_wrapper<DeviceKey>> keys;
+	extern std::vector<std::reference_wrapper<DeviceKey>> keys;
 	//Helper function to add and create DeviceKey at same time
-	DeviceKey& add(DeviceKey&& key) {
+	static DeviceKey& add(DeviceKey&& key) {
 		keys.push_back(key);
 		return key;
 	}
@@ -22,7 +23,7 @@ namespace DeviceKeys {
 	static const DeviceKey RBUTTON = add(DeviceKey(VK_RBUTTON, { "RButton","Right Key", "Right Click" }));
 
 	//Gets device key by case insensitive search 
-	DeviceKey& getByName(const std::string& name) {
+	static DeviceKey& getByName(const std::string& name) {
 		for (std::reference_wrapper<DeviceKey> key : keys) {
 			for (std::string_view n : key.get().names) {
 				if (std::ranges::equal(std::string_view(name), n, [](auto a, auto b) {return std::tolower(a) == std::tolower(b); })) {
@@ -31,12 +32,10 @@ namespace DeviceKeys {
 			}
 		}
 	}
-	DeviceKey& getByVKey(const int vKey) {
+	static DeviceKey& getByVKey(const int vKey) {
 		for (std::reference_wrapper<DeviceKey> key : keys) {
-			for (int n : key.get().value) {
-				if (n == vKey) {
-					return key;
-				}
+			if (vKey == key.get().value) {
+				return key;
 			}
 		}
 	}

@@ -1,4 +1,5 @@
 #include "DeviceKey.h"
+#pragma once
 enum KEYSTATE {
 	DOWN,
 	UP,
@@ -6,9 +7,9 @@ enum KEYSTATE {
 };
 struct Key {
 	//https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
-	DeviceKey key;
-	KEYSTATE state = DOWN;
+	const DeviceKey key;
+	const KEYSTATE state = DOWN;
 	//If -1, then global to all keyboards
-	int deviceId;
-	Key(DeviceKey& key, KEYSTATE state = DOWN, int deviceId = -1) : key(key), state(state), deviceId(deviceId) {};
+	const int deviceId;
+	Key(const DeviceKey& key, const KEYSTATE state = DOWN, const int deviceId = -1) : key(key), state(state), deviceId(deviceId) {};
 };
