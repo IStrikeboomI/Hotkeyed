@@ -1,5 +1,5 @@
 #include "DeviceKeys.h"
 
 namespace DeviceKeys {
-	std::vector<std::reference_wrapper<DeviceKey>> DeviceKeys::keys;
+	std::set<std::shared_ptr<DeviceKey>> DeviceKeys::keys;
 }

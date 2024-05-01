@@ -1,4 +1,4 @@
-#include <iostream>
+ #include <iostream>
 #include "windows/Interceptor.h"
 #include "hotkey/HotkeyManager.h"
 #include "hotkey/DeviceKeys.h"
@@ -8,7 +8,8 @@ int main() {
     DeviceManager::createOrApplyMapping("mapping.mapping");
     //Hotkey hotkey({Key(VK_ADD)}, );
     //HotkeyManager::getInstance().addHotkey(hotkey);
-    Interceptor interceptor;
-    interceptor.keyboardGlobalInterceptors.push_back([](const Keyboard& keyboard, const KEYSTATE state, const DeviceKey& key) {std::wcout << keyboard << " " << state << "\n"; });
-    interceptor.begin();
+    //Interceptor interceptor;
+    //interceptor.keyboardGlobalInterceptors.push_back([](const Keyboard& keyboard, const KEYSTATE state, const DeviceKey& key) {std::wcout << keyboard << " " << state << "\n"; });
+    //interceptor.begin();
+   
 }
