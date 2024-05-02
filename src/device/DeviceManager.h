@@ -40,7 +40,7 @@ namespace DeviceManager {
 			CloseHandle(device);
 			if (r.dwType == RIM_TYPEKEYBOARD) {
 				Keyboard keyboard(currentDeviceId++,std::string(n),std::wstring(name),std::wstring(manufacturer),r.hDevice,info.keyboard);
-				devices.insert(std::make_shared<Keyboard>(keyboard));
+				devices.emplace(std::make_shared<Keyboard>(keyboard));
 			}
 			if (r.dwType == RIM_TYPEMOUSE) {
 

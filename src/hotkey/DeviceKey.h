@@ -9,6 +9,7 @@ struct DeviceKey {
 	const std::vector<std::string_view> names;
 	const char value;
 
-	DeviceKey(char value, std::vector<std::string_view>&& names) : names(names), value(value) {};
+	DeviceKey(char value, const std::vector<std::string_view>& names) : names(names), value(value) {};
 	friend std::ostream& operator<<(std::ostream& out, const DeviceKey& c);
+	bool operator<(const DeviceKey& rhs) const;
 };
