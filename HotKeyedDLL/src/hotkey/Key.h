@@ -1,4 +1,4 @@
-#include "DeviceKey.h"
+#include "../keyboard/DeviceKey.h"
 #pragma once
 enum KEYSTATE {
 	DOWN,

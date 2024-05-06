@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -131,8 +131,8 @@
     <ClCompile Include="src\hotkey\action\Action.cpp" />
     <ClCompile Include="src\hotkey\action\ActionManager.cpp" />
     <ClCompile Include="src\hotkey\action\MoveMouse.cpp" />
-    <ClCompile Include="src\hotkey\DeviceKey.cpp" />
-    <ClCompile Include="src\hotkey\DeviceKeys.cpp" />
+    <ClCompile Include="src\keyboard\DeviceKey.cpp" />
+    <ClCompile Include="src\keyboard\DeviceKeys.cpp" />
     <ClCompile Include="src\hotkey\HotkeyManager.cpp" />
     <ClCompile Include="src\hotkey\Hotkey.cpp" />
     <ClCompile Include="src\device\Device.cpp" />
@@ -151,8 +151,8 @@
     <ClInclude Include="src\hotkey\Hotkey.h" />
     <ClInclude Include="src\device\Device.h" />
     <ClInclude Include="src\device\DeviceManager.h" />
-    <ClInclude Include="src\hotkey\DeviceKey.h" />
-    <ClInclude Include="src\hotkey\DeviceKeys.h" />
+    <ClInclude Include="src\keyboard\DeviceKey.h" />
+    <ClInclude Include="src\keyboard\DeviceKeys.h" />
     <ClInclude Include="src\windows\Interceptor.h" />
     <ClInclude Include="src\device\Keyboard.h" />
   </ItemGroup>

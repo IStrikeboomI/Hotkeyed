@@ -1,5 +1,5 @@
 #include "Interceptor.h"
-#include "../hotkey/DeviceKeys.h"
+#include "../keyboard/DeviceKeys.h"
 LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {return DefWindowProcW(hwnd, msg, wparam, lparam);}
 
 void Interceptor::handleInput(const MSG& msg) {
