@@ -134,6 +134,12 @@
   <ItemGroup>
     <ClCompile Include="src\DeviceBinder.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources\manifest\manifest.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="resources\manifest\DeviceBinder.exe.manifest" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
