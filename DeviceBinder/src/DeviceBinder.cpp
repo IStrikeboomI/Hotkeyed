@@ -3,6 +3,8 @@
 #include <gdiplus.h>
 #include <device/DeviceManager.h>
 #include <CommCtrl.h>
+#include <string>
+#include <random>
 
 #pragma comment (lib,"Hotkeyed.lib")
 #pragma comment (lib,"Gdiplus.lib")
@@ -17,6 +19,8 @@ HFONT systemFont;
 HWND devicePane;
 HWND keyboardLogPane;
 HWND mouseLogPane;
+
+HWND keyboardLogText;
 
 bool CALLBACK setFont(HWND hwnd) {
     SendMessage(hwnd, WM_SETFONT, (WPARAM)systemFont, true);
@@ -70,14 +74,14 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
         }
         case WM_CREATE: {
             RECT window;
-            GetWindowRect(hwnd,&window);
+            GetClientRect(hwnd,&window);
 
             INITCOMMONCONTROLSEX icex;
             icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
             icex.dwICC = ICC_TAB_CLASSES;
             InitCommonControlsEx(&icex);
 
-            HWND tabControl = CreateWindow(WC_TABCONTROL, L"",WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE,0, 0, window.right, window.bottom,hwnd, NULL, nullptr, NULL);
+            HWND tabControl = CreateWindow(WC_TABCONTROL, L"",WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE,0, 0, window.right, 25,hwnd, NULL, nullptr, NULL);
             
             TCITEM devicesTab;
             devicesTab.mask = TCIF_TEXT;
@@ -93,26 +97,38 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
             TabCtrl_InsertItem(tabControl, 0, &devicesTab);
             TabCtrl_InsertItem(tabControl, 1, &keyboardLogTab);
-            TabCtrl_InsertItem(tabControl, 1, &mouseLogTab);
+            TabCtrl_InsertItem(tabControl, 2, &mouseLogTab);
 
             RECT tabControlSize;
             GetWindowRect(tabControl, &tabControlSize);
+            int tabHeight = tabControlSize.bottom - tabControlSize.top;
             HINSTANCE hInstance = (HINSTANCE)GetWindowLong(hwnd, -6);
 
-            devicePane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_BORDER, 0, 0, 1000, 1000, hwnd, (HMENU)DEVICES, hInstance, 0);
+            devicePane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_BORDER, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)DEVICES, hInstance, 0);
             CreateWindowW(WC_STATIC, L"DE", WS_VISIBLE | WS_CHILD, 80, 200, 100, 30, devicePane, (HMENU)DEVICES, hInstance, nullptr);
             CreateWindowW(WC_BUTTON, L"Start", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 40, 400, 100, 30, devicePane, (HMENU)DEVICES, hInstance, nullptr);
             std::cout << GetLastError() << "\n";
             ShowWindow(devicePane, SW_SHOW);
             UpdateWindow(devicePane);
 
-            keyboardLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, tabControlSize.left, tabControlSize.bottom, window.right, window.bottom, hwnd, (HMENU)KEYBOARD_LOG, nullptr, 0);
-            CreateWindowW(WC_STATIC, L"KE", WS_VISIBLE | WS_CHILD , 80, 200, 100, 30, keyboardLogPane, (HMENU)KEYBOARD_LOG, nullptr, nullptr);
+            keyboardLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_BORDER, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)KEYBOARD_LOG, nullptr, 0);
+            keyboardLogText = CreateWindowW(WC_EDIT, nullptr, WS_VISIBLE | WS_CHILD | WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY | WS_BORDER | WS_HSCROLL, 100, 20, window.right - 300, window.bottom, keyboardLogPane, (HMENU)KEYBOARD_LOG, nullptr, nullptr);
+            std::wstring text = L"";
+            std::random_device dev;
+            std::mt19937 rng(dev());
+            std::uniform_int_distribution<std::mt19937::result_type> dist(48, 122);
+            for (int i = 0; i < 100;i++) {
+                for (int j = 0; j < 900; j++) {
+                    text += (char)dist(rng);
+                }
+                text += L" \\n \r\n";
+            }
+            SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)text.c_str());
             ShowWindow(keyboardLogPane, SW_HIDE);
             //UpdateWindow(keyboardLogPane);
 
 
-            mouseLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, tabControlSize.left, tabControlSize.bottom, window.right, window.bottom, hwnd, (HMENU)MOUSE_LOG, nullptr, 0);
+            mouseLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)MOUSE_LOG, nullptr, 0);
             CreateWindowW(WC_STATIC, L"MO", WS_VISIBLE | WS_CHILD , 80, 200, 100, 30, mouseLogPane, (HMENU)MOUSE_LOG, nullptr, nullptr);
             ShowWindow(mouseLogPane, SW_HIDE);
             //UpdateWindow(mouseLogPane);
@@ -123,17 +139,22 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
         }
         case WM_SIZE: {
             //redraw window after resizing
+            int width = LOWORD(lparam);
+            int height = HIWORD(lparam);
+            std::cout << width << "x" << height << "\n";
             RedrawWindow(hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE);
+            SetWindowPos(keyboardLogPane,nullptr,0,0, width, height, SWP_NOMOVE);
+            SetWindowPos(keyboardLogText, nullptr, 0, 0, width * .9, height * .9, SWP_NOMOVE);
             break;
         }
         case WM_PAINT: {
             //initalize ps and hdc
             PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd, &ps);
+            HDC hdc = BeginPaint(devicePane, &ps);
 
             //get dimensions of coordinates
             RECT client;
-            GetClientRect(hwnd, &client);
+            GetWindowRect(devicePane, &client);
             int width = client.right - client.left;
             int height = client.bottom - client.top;
 
@@ -164,7 +185,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             DeleteObject(hBM);
             DeleteDC(memDC);
             //stop painting
-            EndPaint(hwnd, &ps);
+            EndPaint(devicePane, &ps);
             break;
         }
         default:break;
@@ -200,7 +221,7 @@ int main() {
     }
 
     WNDCLASS pane = { 0 };
-    pane.hbrBackground = (HBRUSH)COLOR_MENU;
+    pane.hbrBackground = (HBRUSH)COLOR_WINDOW;
     pane.hInstance = wc.hInstance;
     pane.hCursor = LoadCursor(wc.hInstance, IDC_ARROW);
     pane.lpszClassName = L"Pane";
