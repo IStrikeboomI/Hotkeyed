@@ -10,6 +10,7 @@
 #pragma comment (lib,"Gdiplus.lib")
 #pragma comment (lib,"Comctl32.lib")
 
+#define CHECKBOX 199
 #define DEVICES 200
 #define KEYBOARD_LOG 201
 #define MOUSE_LOG 202
@@ -21,6 +22,13 @@ HWND keyboardLogPane;
 HWND mouseLogPane;
 
 HWND keyboardLogText;
+HWND includeDeviceInterfaceNameCheckbox;
+HWND includeProductNameCheckbox;
+HWND includeManufacturerNameCheckbox;
+HWND includeDeviceKeyCheckbox;
+HWND includeIdCheckbox;
+HWND keyDownCheckbox;
+HWND keyUpCheckbox;
 
 bool CALLBACK setFont(HWND hwnd) {
     SendMessage(hwnd, WM_SETFONT, (WPARAM)systemFont, true);
@@ -37,9 +45,25 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
 }
 LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
     switch (msg) {
-        case WM_DESTROY:
+        case WM_DESTROY: {
             PostQuitMessage(0);
             break;
+        }
+        case WM_COMMAND: {
+            std::cout << wparam << " " << hwnd << "\n";
+            switch (wparam) {
+                case CHECKBOX: {
+                    if (IsDlgButtonChecked(hwnd, CHECKBOX)) {
+                        CheckDlgButton(hwnd, CHECKBOX, BST_UNCHECKED);
+                    } else {
+                        CheckDlgButton(hwnd, CHECKBOX, BST_CHECKED);
+                    }
+                    break;
+                }
+                default:break;
+            }
+            break;
+        }
         case WM_GETMINMAXINFO: {
             RECT screen;
             GetWindowRect(GetDesktopWindow(), &screen);
@@ -53,7 +77,6 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             if (notification->code == TCN_SELCHANGING) return false;
             if (notification->code == TCN_SELCHANGE) {
                 int tab =  TabCtrl_GetCurSel(notification->hwndFrom);
-                std::cout << tab << "\n";
                 if (tab == 0) {
                     ShowWindow(devicePane, SW_SHOW);
                     ShowWindow(keyboardLogPane, SW_HIDE);
@@ -107,12 +130,11 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             devicePane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_BORDER, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)DEVICES, hInstance, 0);
             CreateWindowW(WC_STATIC, L"DE", WS_VISIBLE | WS_CHILD, 80, 200, 100, 30, devicePane, (HMENU)DEVICES, hInstance, nullptr);
             CreateWindowW(WC_BUTTON, L"Start", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 40, 400, 100, 30, devicePane, (HMENU)DEVICES, hInstance, nullptr);
-            std::cout << GetLastError() << "\n";
             ShowWindow(devicePane, SW_SHOW);
             UpdateWindow(devicePane);
 
             keyboardLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_BORDER, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)KEYBOARD_LOG, nullptr, 0);
-            keyboardLogText = CreateWindowW(WC_EDIT, nullptr, WS_VISIBLE | WS_CHILD | WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY | WS_BORDER | WS_HSCROLL, 100, 20, window.right - 300, window.bottom, keyboardLogPane, (HMENU)KEYBOARD_LOG, nullptr, nullptr);
+            keyboardLogText = CreateWindowW(WC_EDIT, nullptr, WS_VISIBLE | WS_CHILD | WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY | WS_BORDER | WS_HSCROLL, 200, 20, window.right - 200, window.bottom, keyboardLogPane, (HMENU)KEYBOARD_LOG, nullptr, nullptr);
             std::wstring text = L"";
             std::random_device dev;
             std::mt19937 rng(dev());
@@ -124,6 +146,24 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
                 text += L" \\n \r\n";
             }
             SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)text.c_str());
+
+            CreateWindowW(WC_BUTTON, L"Options", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | BS_GROUPBOX, 10, 20, 150, 400, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
+            includeDeviceInterfaceNameCheckbox = CreateWindowW(WC_BUTTON,L"Device Interface Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | WS_GROUP | BS_MULTILINE,20,50,100,50, keyboardLogPane,(HMENU) CHECKBOX,nullptr,nullptr);
+            includeProductNameCheckbox = CreateWindowW(WC_BUTTON, L"Product Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 100, 100, 50, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
+            includeManufacturerNameCheckbox = CreateWindowW(WC_BUTTON, L"Manufacturer Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 150, 100, 50, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
+            includeDeviceKeyCheckbox = CreateWindowW(WC_BUTTON, L"Devcie Key", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 200, 100, 50, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
+            includeIdCheckbox = CreateWindowW(WC_BUTTON, L"Device ID", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 250, 100, 50, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
+            keyDownCheckbox = CreateWindowW(WC_BUTTON, L"Key Down", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 300, 100, 50, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
+            keyUpCheckbox = CreateWindowW(WC_BUTTON, L"Key Up", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 350, 100, 50, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
+            
+            
+            SendMessage(includeDeviceInterfaceNameCheckbox, BM_SETCHECK, BST_CHECKED, 0);
+            SendMessage(includeDeviceKeyCheckbox, BM_SETCHECK, BST_CHECKED, 0);
+            SendMessage(includeIdCheckbox, BM_SETCHECK, BST_CHECKED, 0);
+            SendMessage(keyDownCheckbox, BM_SETCHECK, BST_CHECKED, 0);
+            std::cout << SendMessage(includeDeviceInterfaceNameCheckbox, BM_GETCHECK, 0, 0) << "\n";
+            std::cout << SendMessage(includeProductNameCheckbox, BM_GETCHECK, 0, 0) << "\n";
+
             ShowWindow(keyboardLogPane, SW_HIDE);
             //UpdateWindow(keyboardLogPane);
 
@@ -144,7 +184,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             std::cout << width << "x" << height << "\n";
             RedrawWindow(hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE);
             SetWindowPos(keyboardLogPane,nullptr,0,0, width, height, SWP_NOMOVE);
-            SetWindowPos(keyboardLogText, nullptr, 0, 0, width * .9, height * .9, SWP_NOMOVE);
+            SetWindowPos(keyboardLogText, nullptr, 0, 0, width * .8, height * .9, SWP_NOMOVE);
             break;
         }
         case WM_PAINT: {
