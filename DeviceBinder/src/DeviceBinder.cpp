@@ -52,14 +52,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
         case WM_COMMAND: {
             std::cout << wparam << " " << hwnd << "\n";
             switch (wparam) {
-                case CHECKBOX: {
-                    if (IsDlgButtonChecked(hwnd, CHECKBOX)) {
-                        CheckDlgButton(hwnd, CHECKBOX, BST_UNCHECKED);
-                    } else {
-                        CheckDlgButton(hwnd, CHECKBOX, BST_CHECKED);
-                    }
-                    break;
-                }
+                
                 default:break;
             }
             break;
@@ -127,13 +120,13 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             int tabHeight = tabControlSize.bottom - tabControlSize.top;
             HINSTANCE hInstance = (HINSTANCE)GetWindowLong(hwnd, -6);
 
-            devicePane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_BORDER, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)DEVICES, hInstance, 0);
+            devicePane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)DEVICES, hInstance, 0);
             CreateWindowW(WC_STATIC, L"DE", WS_VISIBLE | WS_CHILD, 80, 200, 100, 30, devicePane, (HMENU)DEVICES, hInstance, nullptr);
             CreateWindowW(WC_BUTTON, L"Start", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 40, 400, 100, 30, devicePane, (HMENU)DEVICES, hInstance, nullptr);
             ShowWindow(devicePane, SW_SHOW);
             UpdateWindow(devicePane);
 
-            keyboardLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_BORDER, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)KEYBOARD_LOG, nullptr, 0);
+            keyboardLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)KEYBOARD_LOG, nullptr, 0);
             keyboardLogText = CreateWindowW(WC_EDIT, nullptr, WS_VISIBLE | WS_CHILD | WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY | WS_BORDER | WS_HSCROLL, 200, 20, window.right - 200, window.bottom, keyboardLogPane, (HMENU)KEYBOARD_LOG, nullptr, nullptr);
             std::wstring text = L"";
             std::random_device dev;
@@ -254,7 +247,7 @@ int main() {
     wc.lpfnWndProc = windowProcedure;
     wc.lpszMenuName = L"Device Binder";
     //Adds icon in corner (117 is icon)
-    wc.hIcon = (HICON)LoadImage(wc.hInstance, MAKEINTRESOURCEW(117), IMAGE_ICON, 10, 0, LR_DEFAULTSIZE | LR_SHARED);
+    wc.hIcon = (HICON)LoadImage(wc.hInstance, MAKEINTRESOURCEW(117), IMAGE_ICON, 256, 256, LR_DEFAULTSIZE | LR_SHARED);
 
     if (!RegisterClass(&wc)) {
         return -1;

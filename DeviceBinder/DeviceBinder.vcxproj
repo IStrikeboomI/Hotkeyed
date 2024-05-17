@@ -135,10 +135,15 @@
     <ClCompile Include="src\DeviceBinder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="resources\icon\icons.rc" />
     <ResourceCompile Include="resources\manifest\manifest.rc" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="resources\manifest\DeviceBinder.exe.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\icon\pause.ico" />
+    <Image Include="resources\icon\start.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
