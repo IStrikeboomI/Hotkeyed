@@ -10,7 +10,8 @@
 #pragma comment (lib,"Gdiplus.lib")
 #pragma comment (lib,"Comctl32.lib")
 
-#define CHECKBOX 199
+#define CLEAR_KEYBOARD_LOG 198
+#define KEYBOARD_LOG_START_PAUSE 199
 #define DEVICES 200
 #define KEYBOARD_LOG 201
 #define MOUSE_LOG 202
@@ -30,6 +31,8 @@ HWND includeIdCheckbox;
 HWND keyDownCheckbox;
 HWND keyUpCheckbox;
 
+bool keyboardLogRunning = true;
+
 bool CALLBACK setFont(HWND hwnd) {
     SendMessage(hwnd, WM_SETFONT, (WPARAM)systemFont, true);
     return true;
@@ -37,6 +40,21 @@ bool CALLBACK setFont(HWND hwnd) {
 LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
     switch (msg) {
         case WM_COMMAND: {
+            switch (wparam) {
+                case KEYBOARD_LOG_START_PAUSE: {
+                    keyboardLogRunning = !keyboardLogRunning;
+                    if (keyboardLogRunning) {
+                        SendMessage(hwnd, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCEW(119), IMAGE_ICON, 100, 100, LR_DEFAULTSIZE | LR_SHARED));
+                    } else {
+                        SendMessage(hwnd, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCEW(118), IMAGE_ICON, 90, 90, LR_DEFAULTSIZE | LR_SHARED));
+                    }
+                    break;
+                }
+                case CLEAR_KEYBOARD_LOG: {
+                    break;
+                }
+                default:break;
+            }
             break;
         }
         default:break;
@@ -47,14 +65,6 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
     switch (msg) {
         case WM_DESTROY: {
             PostQuitMessage(0);
-            break;
-        }
-        case WM_COMMAND: {
-            std::cout << wparam << " " << hwnd << "\n";
-            switch (wparam) {
-                
-                default:break;
-            }
             break;
         }
         case WM_GETMINMAXINFO: {
@@ -140,14 +150,14 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             }
             SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)text.c_str());
 
-            CreateWindowW(WC_BUTTON, L"Options", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | BS_GROUPBOX, 10, 20, 150, 400, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
-            includeDeviceInterfaceNameCheckbox = CreateWindowW(WC_BUTTON,L"Device Interface Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | WS_GROUP | BS_MULTILINE,20,50,100,50, keyboardLogPane,(HMENU) CHECKBOX,nullptr,nullptr);
-            includeProductNameCheckbox = CreateWindowW(WC_BUTTON, L"Product Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 100, 100, 50, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
-            includeManufacturerNameCheckbox = CreateWindowW(WC_BUTTON, L"Manufacturer Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 150, 100, 50, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
-            includeDeviceKeyCheckbox = CreateWindowW(WC_BUTTON, L"Devcie Key", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 200, 100, 50, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
-            includeIdCheckbox = CreateWindowW(WC_BUTTON, L"Device ID", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 250, 100, 50, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
-            keyDownCheckbox = CreateWindowW(WC_BUTTON, L"Key Down", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 300, 100, 50, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
-            keyUpCheckbox = CreateWindowW(WC_BUTTON, L"Key Up", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 350, 100, 50, keyboardLogPane, (HMENU)CHECKBOX, nullptr, nullptr);
+            CreateWindowW(WC_BUTTON, L"Options", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | BS_GROUPBOX, 10, 20, 150, 400, keyboardLogPane, (HMENU)0, nullptr, nullptr);
+            includeDeviceInterfaceNameCheckbox = CreateWindowW(WC_BUTTON,L"Device Interface Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | WS_GROUP | BS_MULTILINE,20,50,100,50, keyboardLogPane,(HMENU) 0,nullptr,nullptr);
+            includeProductNameCheckbox = CreateWindowW(WC_BUTTON, L"Product Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 100, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
+            includeManufacturerNameCheckbox = CreateWindowW(WC_BUTTON, L"Manufacturer Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 150, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
+            includeDeviceKeyCheckbox = CreateWindowW(WC_BUTTON, L"Devcie Key", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 200, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
+            includeIdCheckbox = CreateWindowW(WC_BUTTON, L"Device ID", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 250, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
+            keyDownCheckbox = CreateWindowW(WC_BUTTON, L"Key Down", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 300, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
+            keyUpCheckbox = CreateWindowW(WC_BUTTON, L"Key Up", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 350, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
             
             
             SendMessage(includeDeviceInterfaceNameCheckbox, BM_SETCHECK, BST_CHECKED, 0);
@@ -157,15 +167,16 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             std::cout << SendMessage(includeDeviceInterfaceNameCheckbox, BM_GETCHECK, 0, 0) << "\n";
             std::cout << SendMessage(includeProductNameCheckbox, BM_GETCHECK, 0, 0) << "\n";
 
+            HWND keyboardLogStartPauseButton = CreateWindowW(WC_BUTTON, L"", WS_VISIBLE | WS_CHILD | BS_ICON | BS_CENTER, 50, 450, 100, 100, keyboardLogPane, (HMENU)KEYBOARD_LOG_START_PAUSE, nullptr, nullptr);
+            SendMessage(keyboardLogStartPauseButton, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCEW(119), IMAGE_ICON, 100, 100, LR_DEFAULTSIZE | LR_SHARED));
+            
+            HWND clearLogButton = CreateWindowW(WC_BUTTON, L"Clear Log", WS_VISIBLE | WS_CHILD, 50, 575, 100, 25, keyboardLogPane, (HMENU)CLEAR_KEYBOARD_LOG, nullptr, nullptr);
             ShowWindow(keyboardLogPane, SW_HIDE);
-            //UpdateWindow(keyboardLogPane);
 
 
             mouseLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)MOUSE_LOG, nullptr, 0);
             CreateWindowW(WC_STATIC, L"MO", WS_VISIBLE | WS_CHILD , 80, 200, 100, 30, mouseLogPane, (HMENU)MOUSE_LOG, nullptr, nullptr);
             ShowWindow(mouseLogPane, SW_HIDE);
-            //UpdateWindow(mouseLogPane);
-            //HWND devicesTab = CreateWindowA(WC_TABCONTROLA,"Devices", WS_VISIBLE,0,0,100,100,hwnd,(HMENU) 0,nullptr, nullptr);
             //change all gui objects to use default system font
             EnumChildWindows(hwnd, (WNDENUMPROC)setFont, NULL);
             break;
