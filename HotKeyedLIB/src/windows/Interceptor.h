@@ -17,6 +17,7 @@ private:
 	void handleInput(const MSG& msg);
 public:
 	std::vector<std::function<void(const Keyboard& keyboard,const KEYSTATE state, const DeviceKey& key)>> keyboardGlobalInterceptors;
+	std::vector<std::function<void(const Mouse& mouse, const KEYSTATE state, const DeviceKey& key, int x, int y)>> mouseGlobalInterceptors;
 	Interceptor();
 
 	void begin();

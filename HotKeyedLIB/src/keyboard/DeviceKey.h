@@ -10,6 +10,7 @@ struct DeviceKey {
 	const unsigned char value;
 
 	DeviceKey(const unsigned char value, const std::vector<std::string_view>& names) : names(names), value(value) {};
+	friend std::wostream& operator<<(std::wostream& out, const DeviceKey& c);
 	friend std::ostream& operator<<(std::ostream& out, const DeviceKey& c);
 	bool operator<(const DeviceKey& rhs) const;
 };

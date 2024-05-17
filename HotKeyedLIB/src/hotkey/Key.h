@@ -3,7 +3,8 @@
 enum KEYSTATE {
 	DOWN,
 	UP,
-	CLICK
+	CLICK,
+	NONE
 };
 struct Key {
 	//https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
