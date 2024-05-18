@@ -5,6 +5,7 @@
 #include <windows/Interceptor.h>
 #include <CommCtrl.h>
 #include <string>
+#include <thread>
 
 #pragma comment (lib,"Hotkeyed.lib")
 #pragma comment (lib,"Gdiplus.lib")
@@ -30,6 +31,7 @@ HWND includeDeviceKeyCheckbox;
 HWND includeIdCheckbox;
 HWND keyDownCheckbox;
 HWND keyUpCheckbox;
+HWND keyboardLogStartPauseButton;
 
 bool keyboardLogRunning = true;
 
@@ -47,15 +49,16 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
                 case KEYBOARD_LOG_START_PAUSE: {
                     keyboardLogRunning = !keyboardLogRunning;
                     if (keyboardLogRunning) {
-                        SendMessage(hwnd, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCEW(119), IMAGE_ICON, 100, 100, LR_DEFAULTSIZE | LR_SHARED));
+                        SendMessage(keyboardLogStartPauseButton, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCEW(119), IMAGE_ICON, 100, 100, LR_DEFAULTSIZE | LR_SHARED));
                     } else {
-                        SendMessage(hwnd, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCEW(118), IMAGE_ICON, 90, 90, LR_DEFAULTSIZE | LR_SHARED));
+                        SendMessage(keyboardLogStartPauseButton, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCEW(118), IMAGE_ICON, 90, 90, LR_DEFAULTSIZE | LR_SHARED));
                     }
                     break;
                 }
                 case CLEAR_KEYBOARD_LOG: {
                     keyboardLog.clear();
                     keyboardLogLineNumber = 0;
+                    SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)L"");
                     break;
                 }
                 default:break;
@@ -142,14 +145,14 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             UpdateWindow(devicePane);
 
             keyboardLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)KEYBOARD_LOG, nullptr, 0);
-            keyboardLogText = CreateWindowW(WC_EDIT, nullptr, WS_VISIBLE | WS_CHILD | WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY | WS_BORDER | WS_HSCROLL, 200, 20, window.right - 200, window.bottom, keyboardLogPane, (HMENU)KEYBOARD_LOG, nullptr, nullptr);
+            keyboardLogText = CreateWindowW(WC_EDIT, nullptr, WS_VISIBLE | WS_CHILD | WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY | WS_BORDER | WS_HSCROLL | ES_WANTRETURN, 200, 20, window.right - 200, window.bottom, keyboardLogPane, (HMENU)KEYBOARD_LOG, nullptr, nullptr);
             SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)L"");
 
             CreateWindowW(WC_BUTTON, L"Options", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | BS_GROUPBOX, 10, 20, 150, 400, keyboardLogPane, (HMENU)0, nullptr, nullptr);
             includeDeviceInterfaceNameCheckbox = CreateWindowW(WC_BUTTON,L"Device Interface Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | WS_GROUP | BS_MULTILINE,20,50,100,50, keyboardLogPane,(HMENU) 0,nullptr,nullptr);
             includeProductNameCheckbox = CreateWindowW(WC_BUTTON, L"Product Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 100, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
             includeManufacturerNameCheckbox = CreateWindowW(WC_BUTTON, L"Manufacturer Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 150, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
-            includeDeviceKeyCheckbox = CreateWindowW(WC_BUTTON, L"Devcie Key", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 200, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
+            includeDeviceKeyCheckbox = CreateWindowW(WC_BUTTON, L"Device Key", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 200, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
             includeIdCheckbox = CreateWindowW(WC_BUTTON, L"Device ID", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 250, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
             keyDownCheckbox = CreateWindowW(WC_BUTTON, L"Key Down", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 300, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
             keyUpCheckbox = CreateWindowW(WC_BUTTON, L"Key Up", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 350, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
@@ -161,7 +164,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             SendMessage(keyDownCheckbox, BM_SETCHECK, BST_CHECKED, 0);
             //std::cout << SendMessage(includeDeviceInterfaceNameCheckbox, BM_GETCHECK, 0, 0) << "\n";
 
-            HWND keyboardLogStartPauseButton = CreateWindowW(WC_BUTTON, L"", WS_VISIBLE | WS_CHILD | BS_ICON | BS_CENTER, 50, 450, 100, 100, keyboardLogPane, (HMENU)KEYBOARD_LOG_START_PAUSE, nullptr, nullptr);
+            keyboardLogStartPauseButton = CreateWindowW(WC_BUTTON, L"", WS_VISIBLE | WS_CHILD | BS_ICON | BS_CENTER, 50, 450, 100, 100, keyboardLogPane, (HMENU)KEYBOARD_LOG_START_PAUSE, nullptr, nullptr);
             SendMessage(keyboardLogStartPauseButton, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCEW(119), IMAGE_ICON, 100, 100, LR_DEFAULTSIZE | LR_SHARED));
             
             HWND clearLogButton = CreateWindowW(WC_BUTTON, L"Clear Log", WS_VISIBLE | WS_CHILD, 50, 575, 100, 25, keyboardLogPane, (HMENU)CLEAR_KEYBOARD_LOG, nullptr, nullptr);
@@ -231,61 +234,65 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 }
 void keyboardInterceptor(const Keyboard& keyboard, const KEYSTATE state, const DeviceKey& key) {
     if (keyboardLogRunning) {
-        //if (SendMessage(keyDownCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::DOWN) {
-        //    std::wstring line = ++keyboardLogLineNumber + L":";
-        //    if (SendMessage(includeDeviceInterfaceNameCheckbox, BM_GETCHECK, 0, 0)) {
-        //        line += L" Device Interface Name: " + std::wstring(keyboard.deviceInterfaceName.begin(), keyboard.deviceInterfaceName.end());
-        //    }
-        //    if (SendMessage(includeProductNameCheckbox, BM_GETCHECK, 0, 0)) {
-        //        line += L" Product Name: " + keyboard.productName;
-        //    }
-        //    if (SendMessage(includeManufacturerNameCheckbox, BM_GETCHECK, 0, 0)) {
-        //        line += L" Manufacturer Name: " + keyboard.manufacturerName;
-        //    }
-        //    if (SendMessage(includeIdCheckbox, BM_GETCHECK, 0, 0)) {
-        //        line += L" Device ID: " + keyboard.id;
-        //    }
-        //    if (SendMessage(includeDeviceKeyCheckbox, BM_GETCHECK, 0, 0)) {
-        //        std::string str{key.names.at(0)};
-        //        line += L" Key: " + std::wstring(str.begin(), str.end());
-        //    }
-        //    line += L" State: DOWN";
-        //    keyboardLog.push_back(line);
-        //}
-        //if (SendMessage(keyUpCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::UP) {
-        //    std::wstring line = ++keyboardLogLineNumber + L":";
-        //    if (SendMessage(includeDeviceInterfaceNameCheckbox, BM_GETCHECK, 0, 0)) {
-        //        line += L" Device Interface Name: " + std::wstring(keyboard.deviceInterfaceName.begin(), keyboard.deviceInterfaceName.end());
-        //    }
-        //    if (SendMessage(includeProductNameCheckbox, BM_GETCHECK, 0, 0)) {
-        //        line += L" Product Name: " + keyboard.productName;
-        //    }
-        //    if (SendMessage(includeManufacturerNameCheckbox, BM_GETCHECK, 0, 0)) {
-        //        line += L" Manufacturer Name: " + keyboard.manufacturerName;
-        //    }
-        //    if (SendMessage(includeIdCheckbox, BM_GETCHECK, 0, 0)) {
-        //        line += L" Device ID: " + keyboard.id;
-        //    }
-        //    if (SendMessage(includeDeviceKeyCheckbox, BM_GETCHECK, 0, 0)) {
-        //        std::string str{ key.names.at(0) };
-        //        line += L" Key: " + std::wstring(str.begin(), str.end());
-        //    }
-        //    line += L" State: UP";
-        //    keyboardLog.push_back(line);
-        //}
-        //std::wstring fullLog = L"";
-        //for (std::wstring line : keyboardLog) {
-        //    fullLog += line + L"\n";
-        //}
-        //SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)fullLog.c_str());
+        if (SendMessage(keyDownCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::DOWN) {
+            std::wstring line = std::to_wstring(++keyboardLogLineNumber) + L":";
+            if (SendMessage(includeDeviceInterfaceNameCheckbox, BM_GETCHECK, 0, 0)) {
+                line += L" Device Interface Name: " + std::wstring(keyboard.deviceInterfaceName.begin(), keyboard.deviceInterfaceName.end());
+            }
+            if (SendMessage(includeProductNameCheckbox, BM_GETCHECK, 0, 0)) {
+                line += L" Product Name: " + keyboard.productName;
+            }
+            if (SendMessage(includeManufacturerNameCheckbox, BM_GETCHECK, 0, 0)) {
+                line += L" Manufacturer Name: " + keyboard.manufacturerName;
+            }
+            if (SendMessage(includeIdCheckbox, BM_GETCHECK, 0, 0)) {
+                line += L" Device ID: " + std::to_wstring(keyboard.id);
+            }
+            if (SendMessage(includeDeviceKeyCheckbox, BM_GETCHECK, 0, 0)) {
+                std::string str{key.names.at(0)};
+                line += L" Key: " + std::wstring(str.begin(), str.end());
+            }
+            line += L" State: DOWN";
+            keyboardLog.push_back(line);
+        }
+        if (SendMessage(keyUpCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::UP) {
+            std::wstring line = std::to_wstring(++keyboardLogLineNumber) + L":";
+            if (SendMessage(includeDeviceInterfaceNameCheckbox, BM_GETCHECK, 0, 0)) {
+                line += L" Device Interface Name: " + std::wstring(keyboard.deviceInterfaceName.begin(), keyboard.deviceInterfaceName.end());
+            }
+            if (SendMessage(includeProductNameCheckbox, BM_GETCHECK, 0, 0)) {
+                line += L" Product Name: " + keyboard.productName;
+            }
+            if (SendMessage(includeManufacturerNameCheckbox, BM_GETCHECK, 0, 0)) {
+                line += L" Manufacturer Name: " + keyboard.manufacturerName;
+            }
+            if (SendMessage(includeIdCheckbox, BM_GETCHECK, 0, 0)) {
+                line += L" Device ID: " + std::to_wstring(keyboard.id);
+            }
+            if (SendMessage(includeDeviceKeyCheckbox, BM_GETCHECK, 0, 0)) {
+                std::string str{ key.names.at(0) };
+                line += L" Key: " + std::wstring(str.begin(), str.end());
+            }
+            line += L" State: UP";
+            keyboardLog.push_back(line);
+        }
+        std::wstring fullLog = L"";
+        for (std::wstring line : keyboardLog) {
+            fullLog += line + L"\r\n";
+        }
+        SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)fullLog.c_str());
     }
 }
 int main() {
 	DeviceManager::populate();
 	DeviceManager::createOrApplyMapping("mapping.mapping");
-    Interceptor interceptor;
-    interceptor.keyboardGlobalInterceptors.push_back(keyboardInterceptor);
 
+    std::thread interceptorThread([]() {
+        Interceptor interceptor;
+        interceptor.keyboardGlobalInterceptors.push_back(keyboardInterceptor);
+        interceptor.begin();
+    });
+    
     NONCLIENTMETRICS metrics = {};
     metrics.cbSize = sizeof(metrics);
     SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);

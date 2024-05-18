@@ -142,6 +142,7 @@
     <Manifest Include="resources\manifest\DeviceBinder.exe.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="resources\icon\icon.ico" />
     <Image Include="resources\icon\pause.ico" />
     <Image Include="resources\icon\start.ico" />
   </ItemGroup>
