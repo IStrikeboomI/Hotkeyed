@@ -11,6 +11,9 @@
 #pragma comment (lib,"Gdiplus.lib")
 #pragma comment (lib,"Comctl32.lib")
 
+#define MOUSE_POSITION 195
+#define CLEAR_MOUSE_LOG 196
+#define MOUSE_LOG_START_PAUSE 197
 #define CLEAR_KEYBOARD_LOG 198
 #define KEYBOARD_LOG_START_PAUSE 199
 #define DEVICES 200
@@ -24,19 +27,37 @@ HWND keyboardLogPane;
 HWND mouseLogPane;
 
 HWND keyboardLogText;
-HWND includeDeviceInterfaceNameCheckbox;
-HWND includeProductNameCheckbox;
-HWND includeManufacturerNameCheckbox;
-HWND includeDeviceKeyCheckbox;
-HWND includeIdCheckbox;
-HWND keyDownCheckbox;
-HWND keyUpCheckbox;
+HWND keyboardIncludeDeviceInterfaceNameCheckbox;
+HWND keyboardIncludeProductNameCheckbox;
+HWND keyboardIncludeManufacturerNameCheckbox;
+HWND keyboardIncludeDeviceKeyCheckbox;
+HWND keyboardIncludeIdCheckbox;
+HWND keyboardKeyDownCheckbox;
+HWND keyboardKeyUpCheckbox;
 HWND keyboardLogStartPauseButton;
 
 bool keyboardLogRunning = true;
 
 std::vector<std::wstring> keyboardLog;
 unsigned int keyboardLogLineNumber = 0;
+
+HWND mouseLogText;
+HWND mouseIncludeDeviceInterfaceNameCheckbox;
+HWND mouseIncludeProductNameCheckbox;
+HWND mouseIncludeManufacturerNameCheckbox;
+HWND mouseIncludeDeviceKeyCheckbox;
+HWND mouseIncludeIdCheckbox;
+HWND mouseKeyDownCheckbox;
+HWND mouseKeyUpCheckbox;
+HWND mousePositionCheckbox;
+HWND mouseXPositionCheckbox;
+HWND mouseYPositionCheckbox;
+HWND mouseLogStartPauseButton;
+
+bool mouseLogRunning = true;
+
+std::vector<std::wstring> mouseLog;
+unsigned int mouseLogLineNumber = 0;
 
 bool CALLBACK setFont(HWND hwnd) {
     SendMessage(hwnd, WM_SETFONT, (WPARAM)systemFont, true);
@@ -59,6 +80,31 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
                     keyboardLog.clear();
                     keyboardLogLineNumber = 0;
                     SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)L"");
+                    break;
+                }
+                case MOUSE_LOG_START_PAUSE: {
+                    mouseLogRunning = !mouseLogRunning;
+                    if (mouseLogRunning) {
+                        SendMessage(mouseLogStartPauseButton, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCEW(119), IMAGE_ICON, 100, 100, LR_DEFAULTSIZE | LR_SHARED));
+                    } else {
+                        SendMessage(mouseLogStartPauseButton, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCEW(118), IMAGE_ICON, 90, 90, LR_DEFAULTSIZE | LR_SHARED));
+                    }
+                    break;
+                }
+                case CLEAR_MOUSE_LOG: {
+                    mouseLog.clear();
+                    mouseLogLineNumber = 0;
+                    SendMessage(mouseLogText, WM_SETTEXT, 0, (LPARAM)L"");
+                    break;
+                }
+                case MOUSE_POSITION: {
+                    if (SendMessage(mousePositionCheckbox, BM_GETCHECK, 0, 0)) {
+                        EnableWindow(mouseXPositionCheckbox, true);
+                        EnableWindow(mouseYPositionCheckbox, true);
+                    } else {
+                        EnableWindow(mouseXPositionCheckbox, false);
+                        EnableWindow(mouseYPositionCheckbox, false);
+                    }
                     break;
                 }
                 default:break;
@@ -144,35 +190,65 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             ShowWindow(devicePane, SW_SHOW);
             UpdateWindow(devicePane);
 
+
+
             keyboardLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)KEYBOARD_LOG, nullptr, 0);
             keyboardLogText = CreateWindowW(WC_EDIT, nullptr, WS_VISIBLE | WS_CHILD | WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY | WS_BORDER | WS_HSCROLL | ES_WANTRETURN, 200, 20, window.right - 200, window.bottom, keyboardLogPane, (HMENU)KEYBOARD_LOG, nullptr, nullptr);
             SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)L"");
 
             CreateWindowW(WC_BUTTON, L"Options", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | BS_GROUPBOX, 10, 20, 150, 400, keyboardLogPane, (HMENU)0, nullptr, nullptr);
-            includeDeviceInterfaceNameCheckbox = CreateWindowW(WC_BUTTON,L"Device Interface Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | WS_GROUP | BS_MULTILINE,20,50,100,50, keyboardLogPane,(HMENU) 0,nullptr,nullptr);
-            includeProductNameCheckbox = CreateWindowW(WC_BUTTON, L"Product Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 100, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
-            includeManufacturerNameCheckbox = CreateWindowW(WC_BUTTON, L"Manufacturer Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 150, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
-            includeDeviceKeyCheckbox = CreateWindowW(WC_BUTTON, L"Device Key", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 200, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
-            includeIdCheckbox = CreateWindowW(WC_BUTTON, L"Device ID", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 250, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
-            keyDownCheckbox = CreateWindowW(WC_BUTTON, L"Key Down", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 300, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
-            keyUpCheckbox = CreateWindowW(WC_BUTTON, L"Key Up", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 350, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
+            keyboardIncludeDeviceInterfaceNameCheckbox = CreateWindowW(WC_BUTTON,L"Device Interface Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | WS_GROUP | BS_MULTILINE,20,50,100,50, keyboardLogPane,(HMENU) 0,nullptr,nullptr);
+            keyboardIncludeProductNameCheckbox = CreateWindowW(WC_BUTTON, L"Product Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 100, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
+            keyboardIncludeManufacturerNameCheckbox = CreateWindowW(WC_BUTTON, L"Manufacturer Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 150, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
+            keyboardIncludeDeviceKeyCheckbox = CreateWindowW(WC_BUTTON, L"Device Key", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 200, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
+            keyboardIncludeIdCheckbox = CreateWindowW(WC_BUTTON, L"Device ID", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 250, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
+            keyboardKeyDownCheckbox = CreateWindowW(WC_BUTTON, L"Key Down", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 300, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
+            keyboardKeyUpCheckbox = CreateWindowW(WC_BUTTON, L"Key Up", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 350, 100, 50, keyboardLogPane, (HMENU)0, nullptr, nullptr);
             
             
-            SendMessage(includeDeviceInterfaceNameCheckbox, BM_SETCHECK, BST_CHECKED, 0);
-            SendMessage(includeDeviceKeyCheckbox, BM_SETCHECK, BST_CHECKED, 0);
-            SendMessage(includeIdCheckbox, BM_SETCHECK, BST_CHECKED, 0);
-            SendMessage(keyDownCheckbox, BM_SETCHECK, BST_CHECKED, 0);
-            //std::cout << SendMessage(includeDeviceInterfaceNameCheckbox, BM_GETCHECK, 0, 0) << "\n";
+            SendMessage(keyboardIncludeDeviceInterfaceNameCheckbox, BM_SETCHECK, BST_CHECKED, 0);
+            SendMessage(keyboardIncludeDeviceKeyCheckbox, BM_SETCHECK, BST_CHECKED, 0);
+            SendMessage(keyboardIncludeIdCheckbox, BM_SETCHECK, BST_CHECKED, 0);
+            SendMessage(keyboardKeyDownCheckbox, BM_SETCHECK, BST_CHECKED, 0);
 
             keyboardLogStartPauseButton = CreateWindowW(WC_BUTTON, L"", WS_VISIBLE | WS_CHILD | BS_ICON | BS_CENTER, 50, 450, 100, 100, keyboardLogPane, (HMENU)KEYBOARD_LOG_START_PAUSE, nullptr, nullptr);
             SendMessage(keyboardLogStartPauseButton, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCEW(119), IMAGE_ICON, 100, 100, LR_DEFAULTSIZE | LR_SHARED));
             
-            HWND clearLogButton = CreateWindowW(WC_BUTTON, L"Clear Log", WS_VISIBLE | WS_CHILD, 50, 575, 100, 25, keyboardLogPane, (HMENU)CLEAR_KEYBOARD_LOG, nullptr, nullptr);
+            HWND clearKeyboardLogButton = CreateWindowW(WC_BUTTON, L"Clear Log", WS_VISIBLE | WS_CHILD, 50, 575, 100, 25, keyboardLogPane, (HMENU)CLEAR_KEYBOARD_LOG, nullptr, nullptr);
             ShowWindow(keyboardLogPane, SW_HIDE);
 
 
+
             mouseLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)MOUSE_LOG, nullptr, 0);
-            CreateWindowW(WC_STATIC, L"MO", WS_VISIBLE | WS_CHILD , 80, 200, 100, 30, mouseLogPane, (HMENU)MOUSE_LOG, nullptr, nullptr);
+            mouseLogText = CreateWindowW(WC_EDIT, nullptr, WS_VISIBLE | WS_CHILD | WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY | WS_BORDER | WS_HSCROLL | ES_WANTRETURN, 200, 20, window.right - 200, window.bottom, mouseLogPane, (HMENU)MOUSE_LOG, nullptr, nullptr);
+            SendMessage(mouseLogText, WM_SETTEXT, 0, (LPARAM)L"");
+
+            CreateWindowW(WC_BUTTON, L"Options", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | BS_GROUPBOX, 10, 20, 150, 500, mouseLogPane, (HMENU)0, nullptr, nullptr);
+            mouseIncludeDeviceInterfaceNameCheckbox = CreateWindowW(WC_BUTTON, L"Device Interface Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | WS_GROUP | BS_MULTILINE, 20, 50, 100, 50, mouseLogPane, (HMENU)0, nullptr, nullptr);
+            mouseIncludeProductNameCheckbox = CreateWindowW(WC_BUTTON, L"Product Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 100, 100, 50, mouseLogPane, (HMENU)0, nullptr, nullptr);
+            mouseIncludeManufacturerNameCheckbox = CreateWindowW(WC_BUTTON, L"Manufacturer Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 150, 100, 50, mouseLogPane, (HMENU)0, nullptr, nullptr);
+            mouseIncludeDeviceKeyCheckbox = CreateWindowW(WC_BUTTON, L"Device Key", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 200, 100, 50, mouseLogPane, (HMENU)0, nullptr, nullptr);
+            mouseIncludeIdCheckbox = CreateWindowW(WC_BUTTON, L"Device ID", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 250, 100, 50, mouseLogPane, (HMENU)0, nullptr, nullptr);
+            mouseKeyDownCheckbox = CreateWindowW(WC_BUTTON, L"Key Down", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 300, 100, 50, mouseLogPane, (HMENU)0, nullptr, nullptr);
+            mouseKeyUpCheckbox = CreateWindowW(WC_BUTTON, L"Key Up", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 350, 100, 50, mouseLogPane, (HMENU)0, nullptr, nullptr);
+            mousePositionCheckbox = CreateWindowW(WC_BUTTON, L"Position", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 20, 400, 100, 25, mouseLogPane, (HMENU)MOUSE_POSITION, nullptr, nullptr);
+            mouseXPositionCheckbox = CreateWindowW(WC_BUTTON, L"X", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 35, 425, 100, 25, mouseLogPane, (HMENU)0, nullptr, nullptr);
+            mouseYPositionCheckbox = CreateWindowW(WC_BUTTON, L"Y", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, 35, 450, 100, 25, mouseLogPane, (HMENU)0, nullptr, nullptr);
+
+            SendMessage(mouseIncludeDeviceInterfaceNameCheckbox, BM_SETCHECK, BST_CHECKED, 0);
+            SendMessage(mouseIncludeDeviceKeyCheckbox, BM_SETCHECK, BST_CHECKED, 0);
+            SendMessage(mouseIncludeIdCheckbox, BM_SETCHECK, BST_CHECKED, 0);
+            SendMessage(mouseKeyDownCheckbox, BM_SETCHECK, BST_CHECKED, 0);
+            SendMessage(mouseXPositionCheckbox, BM_SETCHECK, BST_CHECKED, 0);
+            SendMessage(mouseYPositionCheckbox, BM_SETCHECK, BST_CHECKED, 0);
+            EnableWindow(mouseXPositionCheckbox, false);
+            EnableWindow(mouseYPositionCheckbox, false);
+
+            mouseLogStartPauseButton = CreateWindowW(WC_BUTTON, L"", WS_VISIBLE | WS_CHILD | BS_ICON | BS_CENTER, 50, 550, 100, 100, mouseLogPane, (HMENU)MOUSE_LOG_START_PAUSE, nullptr, nullptr);
+            SendMessage(mouseLogStartPauseButton, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCEW(119), IMAGE_ICON, 100, 100, LR_DEFAULTSIZE | LR_SHARED));
+
+            HWND clearMouseLogButton = CreateWindowW(WC_BUTTON, L"Clear Log", WS_VISIBLE | WS_CHILD, 50, 675, 100, 25, mouseLogPane, (HMENU)CLEAR_MOUSE_LOG, nullptr, nullptr);
+
             ShowWindow(mouseLogPane, SW_HIDE);
             //change all gui objects to use default system font
             EnumChildWindows(hwnd, (WNDENUMPROC)setFont, NULL);
@@ -185,6 +261,8 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             RedrawWindow(devicePane, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE);
             SetWindowPos(keyboardLogPane,nullptr,0,0, width, height, SWP_NOMOVE);
             SetWindowPos(keyboardLogText, nullptr, 0, 0, width * .8, height * .9, SWP_NOMOVE);
+            SetWindowPos(mouseLogPane, nullptr, 0, 0, width, height, SWP_NOMOVE);
+            SetWindowPos(mouseLogText, nullptr, 0, 0, width * .8, height * .9, SWP_NOMOVE);
             break;
         }
         case WM_PAINT: {
@@ -234,53 +312,85 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 }
 void keyboardInterceptor(const Keyboard& keyboard, const KEYSTATE state, const DeviceKey& key) {
     if (keyboardLogRunning) {
-        if (SendMessage(keyDownCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::DOWN) {
-            std::wstring line = std::to_wstring(++keyboardLogLineNumber) + L":";
-            if (SendMessage(includeDeviceInterfaceNameCheckbox, BM_GETCHECK, 0, 0)) {
-                line += L" Device Interface Name: " + std::wstring(keyboard.deviceInterfaceName.begin(), keyboard.deviceInterfaceName.end());
-            }
-            if (SendMessage(includeProductNameCheckbox, BM_GETCHECK, 0, 0)) {
-                line += L" Product Name: " + keyboard.productName;
-            }
-            if (SendMessage(includeManufacturerNameCheckbox, BM_GETCHECK, 0, 0)) {
-                line += L" Manufacturer Name: " + keyboard.manufacturerName;
-            }
-            if (SendMessage(includeIdCheckbox, BM_GETCHECK, 0, 0)) {
-                line += L" Device ID: " + std::to_wstring(keyboard.id);
-            }
-            if (SendMessage(includeDeviceKeyCheckbox, BM_GETCHECK, 0, 0)) {
-                std::string str{key.names.at(0)};
-                line += L" Key: " + std::wstring(str.begin(), str.end());
-            }
-            line += L" State: DOWN";
-            keyboardLog.push_back(line);
+        std::wstring line = std::to_wstring(++keyboardLogLineNumber) + L":";
+        if (SendMessage(keyboardIncludeDeviceInterfaceNameCheckbox, BM_GETCHECK, 0, 0)) {
+            line += L" Device Interface Name: " + std::wstring(keyboard.deviceInterfaceName.begin(), keyboard.deviceInterfaceName.end());
         }
-        if (SendMessage(keyUpCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::UP) {
-            std::wstring line = std::to_wstring(++keyboardLogLineNumber) + L":";
-            if (SendMessage(includeDeviceInterfaceNameCheckbox, BM_GETCHECK, 0, 0)) {
-                line += L" Device Interface Name: " + std::wstring(keyboard.deviceInterfaceName.begin(), keyboard.deviceInterfaceName.end());
-            }
-            if (SendMessage(includeProductNameCheckbox, BM_GETCHECK, 0, 0)) {
-                line += L" Product Name: " + keyboard.productName;
-            }
-            if (SendMessage(includeManufacturerNameCheckbox, BM_GETCHECK, 0, 0)) {
-                line += L" Manufacturer Name: " + keyboard.manufacturerName;
-            }
-            if (SendMessage(includeIdCheckbox, BM_GETCHECK, 0, 0)) {
-                line += L" Device ID: " + std::to_wstring(keyboard.id);
-            }
-            if (SendMessage(includeDeviceKeyCheckbox, BM_GETCHECK, 0, 0)) {
-                std::string str{ key.names.at(0) };
-                line += L" Key: " + std::wstring(str.begin(), str.end());
-            }
+        if (SendMessage(keyboardIncludeProductNameCheckbox, BM_GETCHECK, 0, 0)) {
+            line += L" Product Name: " + keyboard.productName;
+        }
+        if (SendMessage(keyboardIncludeManufacturerNameCheckbox, BM_GETCHECK, 0, 0)) {
+            line += L" Manufacturer Name: " + keyboard.manufacturerName;
+        }
+        if (SendMessage(keyboardIncludeIdCheckbox, BM_GETCHECK, 0, 0)) {
+            line += L" Device ID: " + std::to_wstring(keyboard.id);
+        }
+        if (SendMessage(keyboardIncludeDeviceKeyCheckbox, BM_GETCHECK, 0, 0)) {
+            std::string str{ key.names.at(0) };
+            line += L" Key: " + std::wstring(str.begin(), str.end());
+        }
+        if (SendMessage(keyboardKeyDownCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::DOWN) {
+            line += L" State: DOWN"; 
+        }
+        if (SendMessage(keyboardKeyUpCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::UP) {
             line += L" State: UP";
-            keyboardLog.push_back(line);
         }
+        keyboardLog.push_back(line);
         std::wstring fullLog = L"";
         for (std::wstring line : keyboardLog) {
             fullLog += line + L"\r\n";
         }
         SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)fullLog.c_str());
+    }
+}
+void mouseInterceptor(const Mouse& mouse, const KEYSTATE state, const DeviceKey& key, int x, int y) {
+    if (mouseLogRunning) {
+        
+        std::wstring line = std::to_wstring(mouseLogLineNumber) + L":";
+        if (SendMessage(mouseIncludeDeviceInterfaceNameCheckbox, BM_GETCHECK, 0, 0)) {
+            line += L" Device Interface Name: " + std::wstring(mouse.deviceInterfaceName.begin(), mouse.deviceInterfaceName.end());
+        }
+        if (SendMessage(mouseIncludeProductNameCheckbox, BM_GETCHECK, 0, 0)) {
+            line += L" Product Name: " + mouse.productName;
+        }
+        if (SendMessage(mouseIncludeManufacturerNameCheckbox, BM_GETCHECK, 0, 0)) {
+            line += L" Manufacturer Name: " + mouse.manufacturerName;
+        }
+        if (SendMessage(mouseIncludeIdCheckbox, BM_GETCHECK, 0, 0)) {
+            line += L" Device ID: " + std::to_wstring(mouse.id);
+        }
+        if (SendMessage(mouseIncludeDeviceKeyCheckbox, BM_GETCHECK, 0, 0)) {
+            std::string str{ key.names.at(0) };
+            line += L" Key: " + std::wstring(str.begin(), str.end());
+        }
+        if (SendMessage(mouseKeyDownCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::DOWN) { 
+            line += L" State: DOWN";
+        }
+        if (SendMessage(mouseKeyUpCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::UP) {
+            line += L" State: UP";
+        }
+        boolean addLine = false;
+        if (SendMessage(mousePositionCheckbox, BM_GETCHECK, 0, 0)) {
+            if (SendMessage(mouseXPositionCheckbox, BM_GETCHECK, 0, 0)) {
+                line += L" X-Pos: " + std::to_wstring(x);
+            }
+            if (SendMessage(mouseYPositionCheckbox, BM_GETCHECK, 0, 0)) {
+                line += L" Y-Pos: " + std::to_wstring(y);
+            }
+            mouseLog.push_back(line);
+            addLine = true;
+        } else if (state != KEYSTATE::NONE) {
+            mouseLog.push_back(line);
+            addLine = true;
+        }
+        if (addLine) {
+            mouseLogLineNumber++;
+            std::wstring fullLog = L"";
+            for (std::wstring line : mouseLog) {
+                fullLog += line + L"\r\n";
+            }
+            SendMessage(mouseLogText, WM_SETTEXT, 0, (LPARAM)fullLog.c_str());
+        }
     }
 }
 int main() {
@@ -290,6 +400,7 @@ int main() {
     std::thread interceptorThread([]() {
         Interceptor interceptor;
         interceptor.keyboardGlobalInterceptors.push_back(keyboardInterceptor);
+        interceptor.mouseGlobalInterceptors.push_back(mouseInterceptor);
         interceptor.begin();
     });
     
