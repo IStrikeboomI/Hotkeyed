@@ -38,7 +38,6 @@ HWND keyboardLogStartPauseButton;
 
 bool keyboardLogRunning = true;
 
-std::vector<std::wstring> keyboardLog;
 unsigned int keyboardLogLineNumber = 0;
 
 HWND mouseLogText;
@@ -56,7 +55,6 @@ HWND mouseLogStartPauseButton;
 
 bool mouseLogRunning = true;
 
-std::vector<std::wstring> mouseLog;
 unsigned int mouseLogLineNumber = 0;
 
 bool CALLBACK setFont(HWND hwnd) {
@@ -77,7 +75,6 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
                     break;
                 }
                 case CLEAR_KEYBOARD_LOG: {
-                    keyboardLog.clear();
                     keyboardLogLineNumber = 0;
                     SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)L"");
                     break;
@@ -92,7 +89,6 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
                     break;
                 }
                 case CLEAR_MOUSE_LOG: {
-                    mouseLog.clear();
                     mouseLogLineNumber = 0;
                     SendMessage(mouseLogText, WM_SETTEXT, 0, (LPARAM)L"");
                     break;
@@ -195,6 +191,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             keyboardLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)KEYBOARD_LOG, nullptr, 0);
             keyboardLogText = CreateWindowW(WC_EDIT, nullptr, WS_VISIBLE | WS_CHILD | WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY | WS_BORDER | WS_HSCROLL | ES_WANTRETURN, 200, 20, window.right - 200, window.bottom, keyboardLogPane, (HMENU)KEYBOARD_LOG, nullptr, nullptr);
             SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)L"");
+            SendMessage(keyboardLogText, EM_SETLIMITTEXT, 0, 0);
 
             CreateWindowW(WC_BUTTON, L"Options", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | BS_GROUPBOX, 10, 20, 150, 400, keyboardLogPane, (HMENU)0, nullptr, nullptr);
             keyboardIncludeDeviceInterfaceNameCheckbox = CreateWindowW(WC_BUTTON,L"Device Interface Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | WS_GROUP | BS_MULTILINE,20,50,100,50, keyboardLogPane,(HMENU) 0,nullptr,nullptr);
@@ -222,6 +219,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             mouseLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)MOUSE_LOG, nullptr, 0);
             mouseLogText = CreateWindowW(WC_EDIT, nullptr, WS_VISIBLE | WS_CHILD | WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY | WS_BORDER | WS_HSCROLL | ES_WANTRETURN, 200, 20, window.right - 200, window.bottom, mouseLogPane, (HMENU)MOUSE_LOG, nullptr, nullptr);
             SendMessage(mouseLogText, WM_SETTEXT, 0, (LPARAM)L"");
+            SendMessage(mouseLogText, EM_SETLIMITTEXT, 0, 0);
 
             CreateWindowW(WC_BUTTON, L"Options", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | BS_GROUPBOX, 10, 20, 150, 500, mouseLogPane, (HMENU)0, nullptr, nullptr);
             mouseIncludeDeviceInterfaceNameCheckbox = CreateWindowW(WC_BUTTON, L"Device Interface Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | WS_GROUP | BS_MULTILINE, 20, 50, 100, 50, mouseLogPane, (HMENU)0, nullptr, nullptr);
@@ -335,12 +333,8 @@ void keyboardInterceptor(const Keyboard& keyboard, const KEYSTATE state, const D
         if (SendMessage(keyboardKeyUpCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::UP) {
             line += L" State: UP";
         }
-        keyboardLog.push_back(line);
-        std::wstring fullLog = L"";
-        for (std::wstring line : keyboardLog) {
-            fullLog += line + L"\r\n";
-        }
-        SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)fullLog.c_str());
+        line += L"\r\n";
+        SendMessage(keyboardLogText, EM_REPLACESEL, 0, (LPARAM)line.c_str());
     }
 }
 void mouseInterceptor(const Mouse& mouse, const KEYSTATE state, const DeviceKey& key, int x, int y) {
@@ -377,19 +371,14 @@ void mouseInterceptor(const Mouse& mouse, const KEYSTATE state, const DeviceKey&
             if (SendMessage(mouseYPositionCheckbox, BM_GETCHECK, 0, 0)) {
                 line += L" Y-Pos: " + std::to_wstring(y);
             }
-            mouseLog.push_back(line);
             addLine = true;
         } else if (state != KEYSTATE::NONE) {
-            mouseLog.push_back(line);
             addLine = true;
         }
         if (addLine) {
             mouseLogLineNumber++;
-            std::wstring fullLog = L"";
-            for (std::wstring line : mouseLog) {
-                fullLog += line + L"\r\n";
-            }
-            SendMessage(mouseLogText, WM_SETTEXT, 0, (LPARAM)fullLog.c_str());
+            line += L"\r\n";
+            SendMessage(mouseLogText, EM_REPLACESEL, false, (LPARAM)line.c_str());
         }
     }
 }
