@@ -6,11 +6,17 @@
 #include <CommCtrl.h>
 #include <string>
 #include <thread>
+#include <algorithm>
+#include <memory>
 
 #pragma comment (lib,"Hotkeyed.lib")
 #pragma comment (lib,"Gdiplus.lib")
 #pragma comment (lib,"Comctl32.lib")
 
+
+#define IDM_SAVE_MAPPING 100
+#define IDM_FILE_EXPORT_KEYBOARD_LOG 101
+#define IDM_FILE_EXPORT_MOUSE_LOG 102
 #define MOUSE_POSITION 195
 #define CLEAR_MOUSE_LOG 196
 #define MOUSE_LOG_START_PAUSE 197
@@ -56,7 +62,6 @@ HWND mouseLogStartPauseButton;
 bool mouseLogRunning = true;
 
 unsigned int mouseLogLineNumber = 0;
-
 bool CALLBACK setFont(HWND hwnd) {
     SendMessage(hwnd, WM_SETFONT, (WPARAM)systemFont, true);
     return true;
@@ -125,6 +130,71 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             mmi->ptMinTrackSize.y = screen.bottom >> 2;
             break;
         }
+        case WM_COMMAND: {
+            switch (LOWORD(wparam)) {
+                case IDM_SAVE_MAPPING: {
+                    break;
+                }
+                case IDM_FILE_EXPORT_KEYBOARD_LOG: {
+                    OPENFILENAME ofn;
+                    
+                    wchar_t szFileName[MAX_PATH] = L"Keyboard Log";
+
+                    ZeroMemory(&ofn, sizeof(ofn));
+
+                    ofn.lStructSize = sizeof(ofn);
+                    ofn.hwndOwner = hwnd;
+                    ofn.lpstrFilter = L"Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
+                    ofn.lpstrFile = szFileName;
+                    ofn.nMaxFile = MAX_PATH;
+                    ofn.Flags = OFN_EXPLORER | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+                    ofn.lpstrDefExt = L"txt";
+
+                    if (GetSaveFileName(&ofn)) {
+                        std::wfstream file(ofn.lpstrFile, std::ios::out);
+                        wchar_t keyboardLog[1 << 8];
+                        SendMessage(keyboardLogText,WM_GETTEXT,sizeof(keyboardLog) / sizeof(keyboardLog[0]),(LPARAM)keyboardLog);
+                        if (file.is_open()) {
+                            std::wstring wstr(keyboardLog);
+                            std::replace(wstr.begin(),wstr.end(), '\r',' ');
+                            file << wstr;
+                        }
+                        file.close();
+                    }
+                    break;
+                }
+                case IDM_FILE_EXPORT_MOUSE_LOG: {
+                    OPENFILENAME ofn;
+
+                    wchar_t szFileName[MAX_PATH] = L"Mouse Log";
+
+                    ZeroMemory(&ofn, sizeof(ofn));
+
+                    ofn.lStructSize = sizeof(ofn);
+                    ofn.hwndOwner = hwnd;
+                    ofn.lpstrFilter = L"Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
+                    ofn.lpstrFile = szFileName;
+                    ofn.nMaxFile = MAX_PATH;
+                    ofn.Flags = OFN_EXPLORER | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+                    ofn.lpstrDefExt = L"txt";
+
+                    if (GetSaveFileName(&ofn)) {
+                        std::wfstream file(ofn.lpstrFile, std::ios::out);
+                        wchar_t mouseLog[1 << 8];
+                        SendMessage(mouseLogText, WM_GETTEXT, sizeof(mouseLog) / sizeof(mouseLog[0]), (LPARAM)mouseLog);
+                        if (file.is_open()) {
+                            std::wstring wstr(mouseLog);
+                            std::replace(wstr.begin(), wstr.end(), '\r', ' ');
+                            file << wstr;
+                        }
+                        file.close();
+                    }
+                    break;
+                }
+                default:break;
+            }
+            break;
+        }
         case WM_NOTIFY: {
             NMHDR* notification = (LPNMHDR)lparam;
             if (notification->code == TCN_SELCHANGING) return false;
@@ -149,6 +219,18 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             break;
         }
         case WM_CREATE: {
+
+            HMENU menubar = CreateMenu();
+            HMENU file = CreateMenu();
+
+            AppendMenuW(file, MF_STRING, IDM_SAVE_MAPPING, L"Save Mapping");
+            AppendMenuW(file, MF_SEPARATOR, 0, 0);
+            AppendMenuW(file,MF_STRING,IDM_FILE_EXPORT_KEYBOARD_LOG,L"Export Keyboard Log");
+            AppendMenuW(file, MF_STRING, IDM_FILE_EXPORT_MOUSE_LOG, L"Export Mouse Log");
+
+            AppendMenuW(menubar,MF_POPUP,(UINT_PTR)file,L"File");
+            SetMenu(hwnd,menubar);
+
             RECT window;
             GetClientRect(hwnd,&window);
 
@@ -310,7 +392,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 }
 void keyboardInterceptor(const Keyboard& keyboard, const KEYSTATE state, const DeviceKey& key) {
     if (keyboardLogRunning) {
-        std::wstring line = std::to_wstring(++keyboardLogLineNumber) + L":";
+        std::wstring line = std::to_wstring(keyboardLogLineNumber) + L":";
         if (SendMessage(keyboardIncludeDeviceInterfaceNameCheckbox, BM_GETCHECK, 0, 0)) {
             line += L" Device Interface Name: " + std::wstring(keyboard.deviceInterfaceName.begin(), keyboard.deviceInterfaceName.end());
         }
@@ -327,14 +409,20 @@ void keyboardInterceptor(const Keyboard& keyboard, const KEYSTATE state, const D
             std::string str{ key.names.at(0) };
             line += L" Key: " + std::wstring(str.begin(), str.end());
         }
+        bool addLine = false;
         if (SendMessage(keyboardKeyDownCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::DOWN) {
             line += L" State: DOWN"; 
+            addLine = true;
         }
         if (SendMessage(keyboardKeyUpCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::UP) {
             line += L" State: UP";
+            addLine = true;
         }
-        line += L"\r\n";
-        SendMessage(keyboardLogText, EM_REPLACESEL, 0, (LPARAM)line.c_str());
+        if (addLine) {
+            keyboardLogLineNumber++;
+            line += L"\r\n";
+            SendMessage(keyboardLogText, EM_REPLACESEL, 0, (LPARAM)line.c_str());
+        }
     }
 }
 void mouseInterceptor(const Mouse& mouse, const KEYSTATE state, const DeviceKey& key, int x, int y) {
@@ -357,13 +445,15 @@ void mouseInterceptor(const Mouse& mouse, const KEYSTATE state, const DeviceKey&
             std::string str{ key.names.at(0) };
             line += L" Key: " + std::wstring(str.begin(), str.end());
         }
+        boolean addLine = false;
         if (SendMessage(mouseKeyDownCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::DOWN) { 
             line += L" State: DOWN";
+            addLine = true;
         }
         if (SendMessage(mouseKeyUpCheckbox, BM_GETCHECK, 0, 0) && state == KEYSTATE::UP) {
             line += L" State: UP";
+            addLine = true;
         }
-        boolean addLine = false;
         if (SendMessage(mousePositionCheckbox, BM_GETCHECK, 0, 0)) {
             if (SendMessage(mouseXPositionCheckbox, BM_GETCHECK, 0, 0)) {
                 line += L" X-Pos: " + std::to_wstring(x);
@@ -371,8 +461,6 @@ void mouseInterceptor(const Mouse& mouse, const KEYSTATE state, const DeviceKey&
             if (SendMessage(mouseYPositionCheckbox, BM_GETCHECK, 0, 0)) {
                 line += L" Y-Pos: " + std::to_wstring(y);
             }
-            addLine = true;
-        } else if (state != KEYSTATE::NONE) {
             addLine = true;
         }
         if (addLine) {
