@@ -152,10 +152,10 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
                     if (GetSaveFileName(&ofn)) {
                         std::wfstream file(ofn.lpstrFile, std::ios::out);
-                        wchar_t keyboardLog[1 << 8];
-                        SendMessage(keyboardLogText,WM_GETTEXT,sizeof(keyboardLog) / sizeof(keyboardLog[0]),(LPARAM)keyboardLog);
+                        std::unique_ptr<wchar_t[]> keyboardLog(new wchar_t[1 << 24]);
+                        SendMessage(keyboardLogText,WM_GETTEXT,(1 << 24) * sizeof(wchar_t), (LPARAM)keyboardLog.get());
                         if (file.is_open()) {
-                            std::wstring wstr(keyboardLog);
+                            std::wstring wstr(keyboardLog.get());
                             std::replace(wstr.begin(),wstr.end(), '\r',' ');
                             file << wstr;
                         }
@@ -180,10 +180,10 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
                     if (GetSaveFileName(&ofn)) {
                         std::wfstream file(ofn.lpstrFile, std::ios::out);
-                        wchar_t mouseLog[1 << 8];
-                        SendMessage(mouseLogText, WM_GETTEXT, sizeof(mouseLog) / sizeof(mouseLog[0]), (LPARAM)mouseLog);
+                        std::unique_ptr<wchar_t[]> mouseLog(new wchar_t[1 << 24]);
+                        SendMessage(mouseLogText, WM_GETTEXT, (1 << 24) * sizeof(wchar_t), (LPARAM)mouseLog.get());
                         if (file.is_open()) {
-                            std::wstring wstr(mouseLog);
+                            std::wstring wstr(mouseLog.get());
                             std::replace(wstr.begin(), wstr.end(), '\r', ' ');
                             file << wstr;
                         }
