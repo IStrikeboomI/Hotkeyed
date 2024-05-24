@@ -274,6 +274,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             keyboardLogText = CreateWindowW(WC_EDIT, nullptr, WS_VISIBLE | WS_CHILD | WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY | WS_BORDER | WS_HSCROLL | ES_WANTRETURN, 200, 20, window.right - 200, window.bottom, keyboardLogPane, (HMENU)KEYBOARD_LOG, nullptr, nullptr);
             SendMessage(keyboardLogText, WM_SETTEXT, 0, (LPARAM)L"");
             SendMessage(keyboardLogText, EM_SETLIMITTEXT, 0, 0);
+            HideCaret(keyboardLogText);
 
             CreateWindowW(WC_BUTTON, L"Options", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | BS_GROUPBOX, 10, 20, 150, 400, keyboardLogPane, (HMENU)0, nullptr, nullptr);
             keyboardIncludeDeviceInterfaceNameCheckbox = CreateWindowW(WC_BUTTON,L"Device Interface Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | WS_GROUP | BS_MULTILINE,20,50,100,50, keyboardLogPane,(HMENU) 0,nullptr,nullptr);
@@ -297,11 +298,11 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             ShowWindow(keyboardLogPane, SW_HIDE);
 
 
-
             mouseLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)MOUSE_LOG, nullptr, 0);
             mouseLogText = CreateWindowW(WC_EDIT, nullptr, WS_VISIBLE | WS_CHILD | WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY | WS_BORDER | WS_HSCROLL | ES_WANTRETURN, 200, 20, window.right - 200, window.bottom, mouseLogPane, (HMENU)MOUSE_LOG, nullptr, nullptr);
             SendMessage(mouseLogText, WM_SETTEXT, 0, (LPARAM)L"");
             SendMessage(mouseLogText, EM_SETLIMITTEXT, 0, 0);
+            HideCaret(mouseLogText);
 
             CreateWindowW(WC_BUTTON, L"Options", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | BS_GROUPBOX, 10, 20, 150, 500, mouseLogPane, (HMENU)0, nullptr, nullptr);
             mouseIncludeDeviceInterfaceNameCheckbox = CreateWindowW(WC_BUTTON, L"Device Interface Name", WS_VISIBLE | WS_CHILD | BS_CHECKBOX | WS_TABSTOP | BS_AUTOCHECKBOX | WS_GROUP | BS_MULTILINE, 20, 50, 100, 50, mouseLogPane, (HMENU)0, nullptr, nullptr);
@@ -421,6 +422,8 @@ void keyboardInterceptor(const Keyboard& keyboard, const KEYSTATE state, const D
         if (addLine) {
             keyboardLogLineNumber++;
             line += L"\r\n";
+            SendMessage(mouseLogText, EM_SETSEL, 0, -1);
+            SendMessage(mouseLogText, EM_SETSEL, -1, -1);
             SendMessage(keyboardLogText, EM_REPLACESEL, 0, (LPARAM)line.c_str());
         }
     }
@@ -466,6 +469,8 @@ void mouseInterceptor(const Mouse& mouse, const KEYSTATE state, const DeviceKey&
         if (addLine) {
             mouseLogLineNumber++;
             line += L"\r\n";
+            SendMessage(mouseLogText, EM_SETSEL, 0, -1);
+            SendMessage(mouseLogText, EM_SETSEL, -1, -1);
             SendMessage(mouseLogText, EM_REPLACESEL, false, (LPARAM)line.c_str());
         }
     }
