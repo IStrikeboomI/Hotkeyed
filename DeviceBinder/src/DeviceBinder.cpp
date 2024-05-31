@@ -479,10 +479,11 @@ int main() {
 	DeviceManager::populate();
 	DeviceManager::createOrApplyMapping("mapping.mapping");
 
-    std::thread interceptorThread([]() {
-        Interceptor interceptor;
-        interceptor.keyboardGlobalInterceptors.push_back(keyboardInterceptor);
-        interceptor.mouseGlobalInterceptors.push_back(mouseInterceptor);
+    Interceptor interceptor;
+    interceptor.keyboardGlobalInterceptors.push_back(keyboardInterceptor);
+    interceptor.mouseGlobalInterceptors.push_back(mouseInterceptor);
+    std::thread interceptorThread([&]() {
+       
         interceptor.begin();
     });
     
@@ -535,5 +536,6 @@ int main() {
         DispatchMessage(&msg);
     }
     Gdiplus::GdiplusShutdown(gdiplusToken);
+    interceptor.end();
 	return 0;
 }

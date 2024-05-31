@@ -93,3 +93,7 @@ void Interceptor::begin() {
 		throw std::runtime_error("Could not register devices");
 	}
 }
+
+void Interceptor::end() {
+	PostQuitMessage(0);
+}

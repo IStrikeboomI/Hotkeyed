@@ -21,5 +21,6 @@ public:
 	Interceptor();
 
 	void begin();
+	void end();
 };
 
