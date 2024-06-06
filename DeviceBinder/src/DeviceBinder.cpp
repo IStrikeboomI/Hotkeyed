@@ -263,7 +263,19 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             HINSTANCE hInstance = (HINSTANCE)GetWindowLong(hwnd, -6);
 
             devicePane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)DEVICES, hInstance, 0);
-            CreateWindowW(WC_STATIC, L"DE", WS_VISIBLE | WS_CHILD, 80, 200, 100, 30, devicePane, (HMENU)DEVICES, hInstance, nullptr);
+            int deviceCount = DeviceManager::devices.size();
+            int keyboardCount = 0;
+            int mouseCount = 0;
+            for (std::shared_ptr<Device> d : DeviceManager::devices) {
+                if (d->type == RIM_TYPEKEYBOARD) {
+                    keyboardCount++;
+                }
+                if (d->type == RIM_TYPEMOUSE) {
+                    mouseCount++;
+                }
+            }
+
+            CreateWindowW(WC_STATIC, std::format(L"Device Count: {}   Keyboard Count: {}   Mouse Count: {}", deviceCount, keyboardCount, mouseCount).c_str(), WS_VISIBLE | WS_CHILD, 80, 200, 500, 100, devicePane, (HMENU)DEVICES, hInstance, nullptr);
             CreateWindowW(WC_BUTTON, L"Start", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 40, 400, 100, 30, devicePane, (HMENU)DEVICES, hInstance, nullptr);
             ShowWindow(devicePane, SW_SHOW);
             UpdateWindow(devicePane);
@@ -346,47 +358,47 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             SetWindowPos(mouseLogText, nullptr, 0, 0, width * .8, height * .9, SWP_NOMOVE);
             break;
         }
-        case WM_PAINT: {
-            //initalize ps and hdc
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(devicePane, &ps);
-
-            //get dimensions of coordinates
-            RECT client;
-            GetWindowRect(devicePane, &client);
-            int width = client.right - client.left;
-            int height = client.bottom - client.top;
-
-            //create a separate hdc for double buffering to prevent flicker
-            HDC memDC = CreateCompatibleDC(hdc);
-            HBITMAP hBM = CreateCompatibleBitmap(hdc, width, height);
-            SelectObject(memDC, hBM);
-
-            //Fill
-            RECT r;
-            SetRect(&r, 0, 0, width, height);
-            FillRect(memDC, &r, (HBRUSH)GetStockObject(WHITE_BRUSH));
-
-            //make graphics
-            Gdiplus::Graphics graphics(memDC);
-            //adds anti-aliasing to make the line look smoother
-            graphics.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
-
-            //Draw
-            Gdiplus::Pen blackPen(Gdiplus::Color::Black,5);
-            graphics.DrawRectangle(&blackPen,100,100,width - 200,height - 200);
-
-
-            //paint on window
-            BitBlt(hdc, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
-
-            //free up to prevent resource leak
-            DeleteObject(hBM);
-            DeleteDC(memDC);
-            //stop painting
-            EndPaint(devicePane, &ps);
-            break;
-        }
+        //case WM_PAINT: {
+        //    //initalize ps and hdc
+        //    PAINTSTRUCT ps;
+        //    HDC hdc = BeginPaint(devicePane, &ps);
+        //
+        //    //get dimensions of coordinates
+        //    RECT client;
+        //    GetWindowRect(devicePane, &client);
+        //    int width = client.right - client.left;
+        //    int height = client.bottom - client.top;
+        //
+        //    //create a separate hdc for double buffering to prevent flicker
+        //    HDC memDC = CreateCompatibleDC(hdc);
+        //    HBITMAP hBM = CreateCompatibleBitmap(hdc, width, height);
+        //    SelectObject(memDC, hBM);
+        //
+        //    //Fill
+        //    RECT r;
+        //    SetRect(&r, 0, 0, width, height);
+        //    FillRect(memDC, &r, (HBRUSH)GetStockObject(WHITE_BRUSH));
+        //
+        //    //make graphics
+        //    Gdiplus::Graphics graphics(memDC);
+        //    //adds anti-aliasing to make the line look smoother
+        //    graphics.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
+        //
+        //    //Draw
+        //    Gdiplus::Pen blackPen(Gdiplus::Color::Black,5);
+        //    graphics.DrawRectangle(&blackPen,100,100,width - 200,height - 200);
+        //
+        //
+        //    //paint on window
+        //    BitBlt(hdc, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
+        //
+        //    //free up to prevent resource leak
+        //    DeleteObject(hBM);
+        //    DeleteDC(memDC);
+        //    //stop painting
+        //    EndPaint(devicePane, &ps);
+        //    break;
+        //}
         default:break;
     }
     return DefWindowProcW(hwnd, msg, wparam, lparam);
@@ -492,9 +504,9 @@ int main() {
     SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
     systemFont = CreateFontIndirect(&metrics.lfCaptionFont);
 
-    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-    ULONG_PTR gdiplusToken;
-    Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+    //Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    //ULONG_PTR gdiplusToken;
+    //Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
     WNDCLASS wc = { 0 };
     wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
@@ -535,7 +547,7 @@ int main() {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-    Gdiplus::GdiplusShutdown(gdiplusToken);
+    //Gdiplus::GdiplusShutdown(gdiplusToken);
     interceptor.end();
 	return 0;
 }
