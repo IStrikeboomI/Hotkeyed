@@ -32,6 +32,8 @@ HWND devicePane;
 HWND keyboardLogPane;
 HWND mouseLogPane;
 
+HWND deviceListView;
+
 HWND keyboardLogText;
 HWND keyboardIncludeDeviceInterfaceNameCheckbox;
 HWND keyboardIncludeProductNameCheckbox;
@@ -275,8 +277,61 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
                 }
             }
 
-            CreateWindowW(WC_STATIC, std::format(L"Device Count: {}   Keyboard Count: {}   Mouse Count: {}", deviceCount, keyboardCount, mouseCount).c_str(), WS_VISIBLE | WS_CHILD, 80, 200, 500, 100, devicePane, (HMENU)DEVICES, hInstance, nullptr);
-            CreateWindowW(WC_BUTTON, L"Start", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 40, 400, 100, 30, devicePane, (HMENU)DEVICES, hInstance, nullptr);
+            CreateWindowW(WC_STATIC, std::format(L"Device Count: {}   Keyboard Count: {}   Mouse Count: {}", deviceCount, keyboardCount, mouseCount).c_str(), WS_VISIBLE | WS_CHILD, 10, 0, 500, 20, devicePane, (HMENU)DEVICES, hInstance, nullptr);
+            INITCOMMONCONTROLSEX listICEX;
+            listICEX.dwICC = ICC_LISTVIEW_CLASSES;
+            InitCommonControlsEx(&listICEX);
+
+            deviceListView = CreateWindow(WC_LISTVIEW,
+                                             L"Devices",
+                                             WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_EDITLABELS,
+                                             10, 20,
+                                             1000,
+                                             500,
+                                             devicePane,
+                                             nullptr,
+                                             nullptr,
+                                             NULL);
+            LVCOLUMN deviceNameColumn;
+            deviceNameColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+            deviceNameColumn.iSubItem = 0;
+            deviceNameColumn.pszText = (LPWSTR)L"Device Name";
+            deviceNameColumn.cx = 200;              
+            deviceNameColumn.fmt = LVCFMT_CENTER;
+            ListView_InsertColumn(deviceListView, 0, &deviceNameColumn);
+
+            LVCOLUMN deviceIDColumn;
+            deviceIDColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+            deviceIDColumn.iSubItem = 1;
+            deviceIDColumn.pszText = (LPWSTR)L"Device ID";
+            deviceIDColumn.cx = 100;
+            deviceIDColumn.fmt = LVCFMT_CENTER;
+            ListView_InsertColumn(deviceListView, 1, &deviceIDColumn);
+
+            LVCOLUMN deviceTypeColumn;
+            deviceTypeColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+            deviceTypeColumn.iSubItem = 2;
+            deviceTypeColumn.pszText = (LPWSTR)L"Device Type";
+            deviceTypeColumn.cx = 200;
+            deviceTypeColumn.fmt = LVCFMT_CENTER;
+            ListView_InsertColumn(deviceListView, 2, &deviceTypeColumn);
+
+            LVCOLUMN deviceInterfaceNameColumn;
+            deviceInterfaceNameColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+            deviceInterfaceNameColumn.iSubItem = 3;
+            deviceInterfaceNameColumn.pszText = (LPWSTR)L"Device Interface Name";
+            deviceInterfaceNameColumn.cx = 300;
+            deviceInterfaceNameColumn.fmt = LVCFMT_CENTER;
+            ListView_InsertColumn(deviceListView, 3, &deviceInterfaceNameColumn);
+
+            LVCOLUMN manufacturerNameColumn;
+            manufacturerNameColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+            manufacturerNameColumn.iSubItem = 4;
+            manufacturerNameColumn.pszText = (LPWSTR)L"Manufacturer Name";
+            manufacturerNameColumn.cx = 200;
+            manufacturerNameColumn.fmt = LVCFMT_CENTER;
+            ListView_InsertColumn(deviceListView, 4, &manufacturerNameColumn);
+            
             ShowWindow(devicePane, SW_SHOW);
             UpdateWindow(devicePane);
 
@@ -351,54 +406,55 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             //redraw window after resizing
             int width = LOWORD(lparam);
             int height = HIWORD(lparam);
-            RedrawWindow(devicePane, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE);
+            SetWindowPos(devicePane, nullptr, 0, 0, width, height, SWP_NOMOVE);
+            SetWindowPos(deviceListView, nullptr, 0, 0, width, height, SWP_NOMOVE);
             SetWindowPos(keyboardLogPane,nullptr,0,0, width, height, SWP_NOMOVE);
             SetWindowPos(keyboardLogText, nullptr, 0, 0, width * .8, height * .9, SWP_NOMOVE);
             SetWindowPos(mouseLogPane, nullptr, 0, 0, width, height, SWP_NOMOVE);
             SetWindowPos(mouseLogText, nullptr, 0, 0, width * .8, height * .9, SWP_NOMOVE);
             break;
         }
-        //case WM_PAINT: {
-        //    //initalize ps and hdc
-        //    PAINTSTRUCT ps;
-        //    HDC hdc = BeginPaint(devicePane, &ps);
-        //
-        //    //get dimensions of coordinates
-        //    RECT client;
-        //    GetWindowRect(devicePane, &client);
-        //    int width = client.right - client.left;
-        //    int height = client.bottom - client.top;
-        //
-        //    //create a separate hdc for double buffering to prevent flicker
-        //    HDC memDC = CreateCompatibleDC(hdc);
-        //    HBITMAP hBM = CreateCompatibleBitmap(hdc, width, height);
-        //    SelectObject(memDC, hBM);
-        //
-        //    //Fill
-        //    RECT r;
-        //    SetRect(&r, 0, 0, width, height);
-        //    FillRect(memDC, &r, (HBRUSH)GetStockObject(WHITE_BRUSH));
-        //
-        //    //make graphics
-        //    Gdiplus::Graphics graphics(memDC);
-        //    //adds anti-aliasing to make the line look smoother
-        //    graphics.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
-        //
-        //    //Draw
-        //    Gdiplus::Pen blackPen(Gdiplus::Color::Black,5);
-        //    graphics.DrawRectangle(&blackPen,100,100,width - 200,height - 200);
-        //
-        //
-        //    //paint on window
-        //    BitBlt(hdc, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
-        //
-        //    //free up to prevent resource leak
-        //    DeleteObject(hBM);
-        //    DeleteDC(memDC);
-        //    //stop painting
-        //    EndPaint(devicePane, &ps);
-        //    break;
-        //}
+        case WM_PAINT: {
+            ////initalize ps and hdc
+            //PAINTSTRUCT ps;
+            //HDC hdc = BeginPaint(devicePane, &ps);
+            //
+            ////get dimensions of coordinates
+            //RECT client;
+            //GetWindowRect(devicePane, &client);
+            //int width = client.right - client.left;
+            //int height = client.bottom - client.top;
+            //
+            ////create a separate hdc for double buffering to prevent flicker
+            //HDC memDC = CreateCompatibleDC(hdc);
+            //HBITMAP hBM = CreateCompatibleBitmap(hdc, width, height);
+            //SelectObject(memDC, hBM);
+            //
+            ////Fill
+            //RECT r;
+            //SetRect(&r, 0, 0, width, height);
+            //FillRect(memDC, &r, (HBRUSH)COLOR_WINDOW);
+            //
+            ////make graphics
+            //Gdiplus::Graphics graphics(memDC);
+            ////adds anti-aliasing to make the line look smoother
+            //graphics.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
+            //
+            ////Draw
+            //Gdiplus::Pen blackPen(Gdiplus::Color::Black,5);
+            //std::cout << graphics.DrawRectangle(&blackPen,100,800, 200, 200) << "\n";
+            //
+            //
+            ////paint on window
+            //BitBlt(hdc, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
+            //
+            ////free up to prevent resource leak
+            //DeleteObject(hBM);
+            //DeleteDC(memDC);
+            ////stop painting
+            //EndPaint(devicePane, &ps);
+            //break;
+        }
         default:break;
     }
     return DefWindowProcW(hwnd, msg, wparam, lparam);
@@ -504,9 +560,9 @@ int main() {
     SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
     systemFont = CreateFontIndirect(&metrics.lfCaptionFont);
 
-    //Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-    //ULONG_PTR gdiplusToken;
-    //Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    ULONG_PTR gdiplusToken;
+    Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
     WNDCLASS wc = { 0 };
     wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
@@ -547,7 +603,7 @@ int main() {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-    //Gdiplus::GdiplusShutdown(gdiplusToken);
+    Gdiplus::GdiplusShutdown(gdiplusToken);
     interceptor.end();
 	return 0;
 }
