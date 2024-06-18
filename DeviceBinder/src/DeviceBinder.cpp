@@ -295,7 +295,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             LVCOLUMN deviceNameColumn;
             deviceNameColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
             deviceNameColumn.iSubItem = 0;
-            deviceNameColumn.pszText = (LPWSTR)L"Device Name";
+            deviceNameColumn.pszText = const_cast < LPWSTR>(L"Device Name");
             deviceNameColumn.cx = 200;              
             deviceNameColumn.fmt = LVCFMT_CENTER;
             ListView_InsertColumn(deviceListView, 0, &deviceNameColumn);
@@ -303,7 +303,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             LVCOLUMN deviceIDColumn;
             deviceIDColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
             deviceIDColumn.iSubItem = 1;
-            deviceIDColumn.pszText = (LPWSTR)L"Device ID";
+            deviceIDColumn.pszText = const_cast < LPWSTR>(L"Device ID");
             deviceIDColumn.cx = 100;
             deviceIDColumn.fmt = LVCFMT_CENTER;
             ListView_InsertColumn(deviceListView, 1, &deviceIDColumn);
@@ -311,31 +311,54 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             LVCOLUMN deviceTypeColumn;
             deviceTypeColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
             deviceTypeColumn.iSubItem = 2;
-            deviceTypeColumn.pszText = (LPWSTR)L"Device Type";
+            deviceTypeColumn.pszText = const_cast < LPWSTR>(L"Device Type");
             deviceTypeColumn.cx = 200;
             deviceTypeColumn.fmt = LVCFMT_CENTER;
             ListView_InsertColumn(deviceListView, 2, &deviceTypeColumn);
 
-            LVCOLUMN deviceInterfaceNameColumn;
-            deviceInterfaceNameColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-            deviceInterfaceNameColumn.iSubItem = 3;
-            deviceInterfaceNameColumn.pszText = (LPWSTR)L"Device Interface Name";
-            deviceInterfaceNameColumn.cx = 300;
-            deviceInterfaceNameColumn.fmt = LVCFMT_CENTER;
-            ListView_InsertColumn(deviceListView, 3, &deviceInterfaceNameColumn);
-
             LVCOLUMN manufacturerNameColumn;
             manufacturerNameColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-            manufacturerNameColumn.iSubItem = 4;
-            manufacturerNameColumn.pszText = (LPWSTR)L"Manufacturer Name";
+            manufacturerNameColumn.iSubItem = 3;
+            manufacturerNameColumn.pszText = const_cast<LPWSTR>(L"Manufacturer Name");
             manufacturerNameColumn.cx = 200;
             manufacturerNameColumn.fmt = LVCFMT_CENTER;
-            ListView_InsertColumn(deviceListView, 4, &manufacturerNameColumn);
+            ListView_InsertColumn(deviceListView, 3, &manufacturerNameColumn);
+
+            LVCOLUMN deviceInterfaceNameColumn;
+            deviceInterfaceNameColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+            deviceInterfaceNameColumn.iSubItem = 4;
+            deviceInterfaceNameColumn.pszText = const_cast <LPWSTR>(L"Device Interface Name");
+            deviceInterfaceNameColumn.cx = 300;
+            deviceInterfaceNameColumn.fmt = LVCFMT_CENTER;
+            ListView_InsertColumn(deviceListView, 4, &deviceInterfaceNameColumn);
+
+           
+
+            int i = 0;
+            for (std::shared_ptr<Device> d : DeviceManager::devices) {
+                LVITEM lvI;
+                // Initialize LVITEM members that are common to all items.
+                lvI.pszText = LPSTR_TEXTCALLBACK; // Sends an LVN_GETDISPINFO message.
+                lvI.mask = LVIF_TEXT | LVIF_STATE;
+                lvI.stateMask = 0;
+                lvI.iSubItem = 0;
+                lvI.state = 0;
+                lvI.iItem = i;
+                ListView_InsertItem(deviceListView, &lvI);
+                std::cout << GetLastError() << "\n";
+                ListView_SetItemText(deviceListView, i, 0, const_cast<LPWSTR>(d->productName.c_str()));
+                std::wstring deviceIdTemp = std::to_wstring(d->id);
+                ListView_SetItemText(deviceListView, i, 1, const_cast<LPWSTR>(&deviceIdTemp[0]));
+                ListView_SetItemText(deviceListView, i, 2, const_cast<LPWSTR>(d->type == 0 ? L"Mouse" : L"Keyboard"));
+                ListView_SetItemText(deviceListView, i, 3, const_cast<LPWSTR>(d->manufacturerName.c_str()));
+                std::wstring deviceInterfaceNameTemp(d->deviceInterfaceName.begin(), d->deviceInterfaceName.end());
+                ListView_SetItemText(deviceListView, i, 4, const_cast<LPWSTR>(&deviceInterfaceNameTemp[0]));
+                i++;
+            }
+
             
             ShowWindow(devicePane, SW_SHOW);
             UpdateWindow(devicePane);
-
-
 
             keyboardLogPane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)KEYBOARD_LOG, nullptr, 0);
             keyboardLogText = CreateWindowW(WC_EDIT, nullptr, WS_VISIBLE | WS_CHILD | WS_VSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY | WS_BORDER | WS_HSCROLL | ES_WANTRETURN, 200, 20, window.right - 200, window.bottom, keyboardLogPane, (HMENU)KEYBOARD_LOG, nullptr, nullptr);
