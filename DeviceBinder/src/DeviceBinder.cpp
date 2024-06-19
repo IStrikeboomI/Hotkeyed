@@ -68,6 +68,27 @@ bool CALLBACK setFont(HWND hwnd) {
     SendMessage(hwnd, WM_SETFONT, (WPARAM)systemFont, true);
     return true;
 }
+bool sortIdAscending = true;
+int CALLBACK idCompareProc(LPARAM one, LPARAM two, LPARAM sort) {
+    if (sort) {
+        if (one < two) {
+            return -1;
+        }
+        if (one > two) {
+            return 1;
+        }
+    } else {
+        if (one < two) {
+            return 1;
+        }
+        if (one > two) {
+            return -1;
+        }
+    }
+    if (one == two) {
+        return 0;
+    }
+}
 LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
     switch (msg) {
         case WM_COMMAND: {
@@ -111,6 +132,25 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
                     break;
                 }
                 default:break;
+            }
+            break;
+        }
+        case WM_NOTIFY:{
+            switch (((LPNMHDR)lparam)->code) {
+                case LVN_ENDLABELEDIT: {
+                    NMLVDISPINFOA* info = (LPNMLVDISPINFOA)lparam;
+                    std::cout << info->item.iItem << "\n";
+                    break;
+                }
+                case LVN_COLUMNCLICK: {
+                    NMLISTVIEW* view = (NMLISTVIEW*)lparam;
+                    //Id Column;
+                    if (view->iSubItem == 1) {
+                        ListView_SortItems(deviceListView, idCompareProc, sortIdAscending);
+                        sortIdAscending = !sortIdAscending;
+                    }
+                    break;
+                }
             }
             break;
         }
@@ -330,22 +370,19 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             deviceInterfaceNameColumn.pszText = const_cast <LPWSTR>(L"Device Interface Name");
             deviceInterfaceNameColumn.cx = 300;
             deviceInterfaceNameColumn.fmt = LVCFMT_CENTER;
-            ListView_InsertColumn(deviceListView, 4, &deviceInterfaceNameColumn);
-
-           
+            ListView_InsertColumn(deviceListView, 4, &deviceInterfaceNameColumn);    
 
             int i = 0;
             for (std::shared_ptr<Device> d : DeviceManager::devices) {
                 LVITEM lvI;
-                // Initialize LVITEM members that are common to all items.
-                lvI.pszText = LPSTR_TEXTCALLBACK; // Sends an LVN_GETDISPINFO message.
-                lvI.mask = LVIF_TEXT | LVIF_STATE;
+                lvI.pszText = LPSTR_TEXTCALLBACK;
+                lvI.mask = LVIF_TEXT | LVIF_STATE | LVIF_PARAM;
                 lvI.stateMask = 0;
                 lvI.iSubItem = 0;
                 lvI.state = 0;
                 lvI.iItem = i;
+                lvI.lParam = (LPARAM)d->id;
                 ListView_InsertItem(deviceListView, &lvI);
-                std::cout << GetLastError() << "\n";
                 ListView_SetItemText(deviceListView, i, 0, const_cast<LPWSTR>(d->productName.c_str()));
                 std::wstring deviceIdTemp = std::to_wstring(d->id);
                 ListView_SetItemText(deviceListView, i, 1, const_cast<LPWSTR>(&deviceIdTemp[0]));
