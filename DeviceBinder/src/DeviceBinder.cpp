@@ -8,6 +8,7 @@
 #include <thread>
 #include <algorithm>
 #include <memory>
+#include <bitset>
 
 #pragma comment (lib,"Hotkeyed.lib")
 #pragma comment (lib,"Gdiplus.lib")
@@ -68,9 +69,9 @@ bool CALLBACK setFont(HWND hwnd) {
     SendMessage(hwnd, WM_SETFONT, (WPARAM)systemFont, true);
     return true;
 }
-bool sortIdAscending = true;
-int CALLBACK idCompareProc(LPARAM one, LPARAM two, LPARAM sort) {
-    if (sort) {
+bool sortIntAscending = false;
+int CALLBACK sortInt(LPARAM one, LPARAM two, LPARAM ascending) {
+    if (ascending) {
         if (one < two) {
             return -1;
         }
@@ -145,9 +146,9 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
                 case LVN_COLUMNCLICK: {
                     NMLISTVIEW* view = (NMLISTVIEW*)lparam;
                     //Id Column;
-                    if (view->iSubItem == 1) {
-                        ListView_SortItems(deviceListView, idCompareProc, sortIdAscending);
-                        sortIdAscending = !sortIdAscending;
+                    if (view->iSubItem == 0) {
+                        ListView_SortItems(deviceListView, sortInt, sortIntAscending);
+                        sortIntAscending = !sortIntAscending;
                     }
                     break;
                 }
@@ -324,41 +325,34 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
             deviceListView = CreateWindow(WC_LISTVIEW,
                                              L"Devices",
-                                             WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_EDITLABELS,
+                                             WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_EDITLABELS | LVS_ALIGNTOP,
                                              10, 20,
                                              1000,
                                              500,
                                              devicePane,
                                              nullptr,
                                              nullptr,
-                                             NULL);
-            LVCOLUMN deviceNameColumn;
-            deviceNameColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-            deviceNameColumn.iSubItem = 0;
-            deviceNameColumn.pszText = const_cast < LPWSTR>(L"Device Name");
-            deviceNameColumn.cx = 200;              
-            deviceNameColumn.fmt = LVCFMT_CENTER;
-            ListView_InsertColumn(deviceListView, 0, &deviceNameColumn);
+                                                NULL);
 
             LVCOLUMN deviceIDColumn;
             deviceIDColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-            deviceIDColumn.iSubItem = 1;
-            deviceIDColumn.pszText = const_cast < LPWSTR>(L"Device ID");
+            deviceIDColumn.iSubItem = 0;
+            deviceIDColumn.pszText = const_cast <LPWSTR>(L"Device ID");
             deviceIDColumn.cx = 100;
             deviceIDColumn.fmt = LVCFMT_CENTER;
-            ListView_InsertColumn(deviceListView, 1, &deviceIDColumn);
+            ListView_InsertColumn(deviceListView, 0, &deviceIDColumn);
 
-            LVCOLUMN deviceTypeColumn;
-            deviceTypeColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-            deviceTypeColumn.iSubItem = 2;
-            deviceTypeColumn.pszText = const_cast < LPWSTR>(L"Device Type");
-            deviceTypeColumn.cx = 200;
-            deviceTypeColumn.fmt = LVCFMT_CENTER;
-            ListView_InsertColumn(deviceListView, 2, &deviceTypeColumn);
+            LVCOLUMN deviceNameColumn;
+            deviceNameColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+            deviceNameColumn.iSubItem = 1;
+            deviceNameColumn.pszText = const_cast < LPWSTR>(L"Device Name");
+            deviceNameColumn.cx = 200;              
+            deviceNameColumn.fmt = LVCFMT_CENTER;
+            ListView_InsertColumn(deviceListView, 1, &deviceNameColumn);
 
             LVCOLUMN manufacturerNameColumn;
             manufacturerNameColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-            manufacturerNameColumn.iSubItem = 3;
+            manufacturerNameColumn.iSubItem = 2;
             manufacturerNameColumn.pszText = const_cast<LPWSTR>(L"Manufacturer Name");
             manufacturerNameColumn.cx = 200;
             manufacturerNameColumn.fmt = LVCFMT_CENTER;
@@ -366,34 +360,51 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
             LVCOLUMN deviceInterfaceNameColumn;
             deviceInterfaceNameColumn.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-            deviceInterfaceNameColumn.iSubItem = 4;
+            deviceInterfaceNameColumn.iSubItem = 3;
             deviceInterfaceNameColumn.pszText = const_cast <LPWSTR>(L"Device Interface Name");
-            deviceInterfaceNameColumn.cx = 300;
+            deviceInterfaceNameColumn.cx = 700;
             deviceInterfaceNameColumn.fmt = LVCFMT_CENTER;
             ListView_InsertColumn(deviceListView, 4, &deviceInterfaceNameColumn);    
+
+            LVGROUP miceGroup;
+            miceGroup.cbSize = sizeof(LVGROUP);
+            miceGroup.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_STATE;
+            miceGroup.state = LVGS_COLLAPSIBLE;
+            miceGroup.pszHeader = const_cast <LPWSTR>(L"Mice");
+            miceGroup.iGroupId = 0;
+            ListView_InsertGroup(deviceListView, -1, &miceGroup);
+
+            LVGROUP keyboardGroup;
+            keyboardGroup.cbSize = sizeof(LVGROUP);
+            keyboardGroup.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_STATE;
+            keyboardGroup.state = LVGS_COLLAPSIBLE;
+            keyboardGroup.pszHeader = const_cast <LPWSTR>(L"Keyboards");
+            keyboardGroup.iGroupId = 1;
+            ListView_InsertGroup(deviceListView, -1, &keyboardGroup);
 
             int i = 0;
             for (std::shared_ptr<Device> d : DeviceManager::devices) {
                 LVITEM lvI;
                 lvI.pszText = LPSTR_TEXTCALLBACK;
-                lvI.mask = LVIF_TEXT | LVIF_STATE | LVIF_PARAM;
+                lvI.mask = LVIF_TEXT | LVIF_STATE | LVIF_PARAM | LVIF_GROUPID;
                 lvI.stateMask = 0;
                 lvI.iSubItem = 0;
                 lvI.state = 0;
                 lvI.iItem = i;
                 lvI.lParam = (LPARAM)d->id;
+                lvI.iGroupId = d->type;
                 ListView_InsertItem(deviceListView, &lvI);
-                ListView_SetItemText(deviceListView, i, 0, const_cast<LPWSTR>(d->productName.c_str()));
                 std::wstring deviceIdTemp = std::to_wstring(d->id);
-                ListView_SetItemText(deviceListView, i, 1, const_cast<LPWSTR>(&deviceIdTemp[0]));
-                ListView_SetItemText(deviceListView, i, 2, const_cast<LPWSTR>(d->type == 0 ? L"Mouse" : L"Keyboard"));
-                ListView_SetItemText(deviceListView, i, 3, const_cast<LPWSTR>(d->manufacturerName.c_str()));
+                ListView_SetItemText(deviceListView, i, 0, const_cast<LPWSTR>(&deviceIdTemp[0]));
+                ListView_SetItemText(deviceListView, i, 1, const_cast<LPWSTR>(d->productName.c_str()));
+                ListView_SetItemText(deviceListView, i, 2, const_cast<LPWSTR>(d->manufacturerName.c_str()));
                 std::wstring deviceInterfaceNameTemp(d->deviceInterfaceName.begin(), d->deviceInterfaceName.end());
-                ListView_SetItemText(deviceListView, i, 4, const_cast<LPWSTR>(&deviceInterfaceNameTemp[0]));
+                ListView_SetItemText(deviceListView, i, 3, const_cast<LPWSTR>(&deviceInterfaceNameTemp[0]));
                 i++;
             }
+            ListView_EnableGroupView(deviceListView,true);
+            ListView_SortItems(deviceListView, sortInt, true);
 
-            
             ShowWindow(devicePane, SW_SHOW);
             UpdateWindow(devicePane);
 
@@ -467,7 +478,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             int width = LOWORD(lparam);
             int height = HIWORD(lparam);
             SetWindowPos(devicePane, nullptr, 0, 0, width, height, SWP_NOMOVE);
-            SetWindowPos(deviceListView, nullptr, 0, 0, width, height, SWP_NOMOVE);
+            SetWindowPos(deviceListView, nullptr, 0, 0, width * .95, height * .9, SWP_NOMOVE);
             SetWindowPos(keyboardLogPane,nullptr,0,0, width, height, SWP_NOMOVE);
             SetWindowPos(keyboardLogText, nullptr, 0, 0, width * .8, height * .9, SWP_NOMOVE);
             SetWindowPos(mouseLogPane, nullptr, 0, 0, width, height, SWP_NOMOVE);

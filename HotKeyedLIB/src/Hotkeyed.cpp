@@ -11,9 +11,8 @@ void mouseCallback(const Mouse& mouse, const KEYSTATE state, const DeviceKey& ke
 int main() {
     DeviceManager::populate();
     DeviceManager::createOrApplyMapping("mapping.mapping");
-    Interceptor interceptor;
-    interceptor.keyboardGlobalInterceptors.push_back(keyboardCallback);
-    interceptor.mouseGlobalInterceptors.push_back(mouseCallback);
-    interceptor.begin();
+    for (std::shared_ptr<Device> d : DeviceManager::devices) {
+        std::cout << d->id << "\n";
+    }
     return 0;
 }
