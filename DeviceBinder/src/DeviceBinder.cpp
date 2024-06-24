@@ -140,7 +140,12 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
             switch (((LPNMHDR)lparam)->code) {
                 case LVN_ENDLABELEDIT: {
                     NMLVDISPINFOA* info = (LPNMLVDISPINFOA)lparam;
-                    std::cout << info->item.iItem << "\n";
+
+                    if (info->item.pszText) {
+                        wchar_t buf[MAX_PATH];
+                        ListView_GetItemText(deviceListView, info->item.iItem, info->item.iSubItem, buf, MAX_PATH);
+                        std::wcout << buf << "\n";
+                    }
                     break;
                 }
                 case LVN_COLUMNCLICK: {
@@ -149,6 +154,15 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
                     if (view->iSubItem == 0) {
                         ListView_SortItems(deviceListView, sortInt, sortIntAscending);
                         sortIntAscending = !sortIntAscending;
+                    }
+                    break;
+                }
+                //Makes it easier to edit label by just clicking on it
+                case NM_CLICK: {     
+                    NMITEMACTIVATE* info = (LPNMITEMACTIVATE)lparam;
+                    //Id Column
+                    if (info->iSubItem == 0) {
+                        ListView_EditLabel(info->hdr.hwndFrom,info->iItem);
                     }
                     break;
                 }
@@ -176,6 +190,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
         case WM_COMMAND: {
             switch (LOWORD(wparam)) {
                 case IDM_SAVE_MAPPING: {
+
                     break;
                 }
                 case IDM_FILE_EXPORT_KEYBOARD_LOG: {
@@ -386,6 +401,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             for (std::shared_ptr<Device> d : DeviceManager::devices) {
                 LVITEM lvI;
                 lvI.pszText = LPSTR_TEXTCALLBACK;
+                lvI.cchTextMax = 10;
                 lvI.mask = LVIF_TEXT | LVIF_STATE | LVIF_PARAM | LVIF_GROUPID;
                 lvI.stateMask = 0;
                 lvI.iSubItem = 0;

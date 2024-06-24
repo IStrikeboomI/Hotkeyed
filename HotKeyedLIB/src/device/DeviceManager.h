@@ -53,6 +53,15 @@ namespace DeviceManager {
 		return !s.empty() && std::find_if(s.begin(),
 										  s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
 	}
+	static void saveMapping(const std::string& mappingFile = "") {
+		std::fstream file(mappingFile, std::ios::out);
+		if (file.is_open()) {
+			for (std::shared_ptr<Device> d : devices) {
+				file << d->deviceInterfaceName << "=" << d->id << "\n";
+			}
+		}
+		file.close();
+	}
 	static void applyMapping(const std::string& mappingFile) {
 		if (!mappingFile.ends_with(".mapping")) {
 			throw std::invalid_argument("Not a mapping file!");
@@ -79,13 +88,7 @@ namespace DeviceManager {
 		if (std::filesystem::exists(mappingFile)) {
 			applyMapping(mappingFile);
 		} else {
-			std::fstream file(mappingFile, std::ios::out);
-			if (file.is_open()) {
-				for (std::shared_ptr<Device> d : devices) {
-					file << d->deviceInterfaceName << "=" << d->id << "\n";
-				}
-			}
-			file.close();
+			saveMapping(mappingFile);
 		}
 	}
 }
