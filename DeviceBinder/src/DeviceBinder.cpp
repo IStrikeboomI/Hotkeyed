@@ -18,6 +18,7 @@
 #define IDM_SAVE_MAPPING 100
 #define IDM_FILE_EXPORT_KEYBOARD_LOG 101
 #define IDM_FILE_EXPORT_MOUSE_LOG 102
+#define IDM_FILE_EXPORT_MAPPING 103
 #define MOUSE_POSITION 195
 #define CLEAR_MOUSE_LOG 196
 #define MOUSE_LOG_START_PAUSE 197
@@ -193,6 +194,27 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
                     break;
                 }
+                case IDM_FILE_EXPORT_MAPPING: {
+                    OPENFILENAME ofn;
+
+                    wchar_t szFileName[MAX_PATH] = L"mapping";
+
+                    ZeroMemory(&ofn, sizeof(ofn));
+
+                    ofn.lStructSize = sizeof(ofn);
+                    ofn.hwndOwner = hwnd;
+                    ofn.lpstrFilter = L"Device Mapping (*.mapping)\0*.mapping\0Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
+                    ofn.lpstrFile = szFileName;
+                    ofn.nMaxFile = MAX_PATH;
+                    ofn.Flags = OFN_EXPLORER | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+                    ofn.lpstrDefExt = L"mapping";
+
+                    if (GetSaveFileName(&ofn)) {
+                        std::wstring filename(ofn.lpstrFile);
+                        DeviceManager::saveMapping(std::string(filename.begin(),filename.end()));
+                    }
+                    break;
+                }
                 case IDM_FILE_EXPORT_KEYBOARD_LOG: {
                     OPENFILENAME ofn;
                     
@@ -282,6 +304,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             HMENU file = CreateMenu();
 
             AppendMenuW(file, MF_STRING, IDM_SAVE_MAPPING, L"Save Mapping");
+            AppendMenuW(file, MF_STRING, IDM_FILE_EXPORT_MAPPING, L"Export Mapping");
             AppendMenuW(file, MF_SEPARATOR, 0, 0);
             AppendMenuW(file,MF_STRING,IDM_FILE_EXPORT_KEYBOARD_LOG,L"Export Keyboard Log");
             AppendMenuW(file, MF_STRING, IDM_FILE_EXPORT_MOUSE_LOG, L"Export Mouse Log");
@@ -637,8 +660,7 @@ int main() {
     Interceptor interceptor;
     interceptor.keyboardGlobalInterceptors.push_back(keyboardInterceptor);
     interceptor.mouseGlobalInterceptors.push_back(mouseInterceptor);
-    std::thread interceptorThread([&]() {
-       
+    std::thread interceptorThread([&]() {  
         interceptor.begin();
     });
     
