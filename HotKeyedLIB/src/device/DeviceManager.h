@@ -49,6 +49,10 @@ namespace DeviceManager {
 			}
 		}
 	}
+	static void reset() {
+		devices.clear();
+		populate();
+	}
 	static bool isNumber(const std::string& s) {
 		return !s.empty() && std::find_if(s.begin(),
 										  s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
@@ -63,9 +67,6 @@ namespace DeviceManager {
 		file.close();
 	}
 	static void applyMapping(const std::string& mappingFile) {
-		if (!mappingFile.ends_with(".mapping")) {
-			throw std::invalid_argument("Not a mapping file!");
-		}
 		std::fstream file(mappingFile);
 		if (file.is_open()) {
 			std::string line;

@@ -31,6 +31,8 @@
 
 HFONT systemFont;
 
+HWND window;
+
 HWND devicePane;
 HWND keyboardLogPane;
 HWND mouseLogPane;
@@ -73,7 +75,6 @@ bool CALLBACK setFont(HWND hwnd) {
 }
 bool sortIntAscending = false;
 int CALLBACK sortInt(LPARAM one, LPARAM two, LPARAM ascending) {
-    std::cout << one << " " << two << "\n";
     if (ascending) {
         if (one < two) {
             return -1;
@@ -92,6 +93,32 @@ int CALLBACK sortInt(LPARAM one, LPARAM two, LPARAM ascending) {
     if (one == two) {
         return 0;
     }
+}
+void createListViewItems() {
+    ListView_DeleteAllItems(deviceListView);
+    int i = 0;
+    for (std::shared_ptr<Device> d : DeviceManager::devices) {
+        LVITEM lvI;
+        lvI.pszText = LPSTR_TEXTCALLBACK;
+        lvI.cchTextMax = 10;
+        lvI.mask = LVIF_TEXT | LVIF_STATE | LVIF_PARAM | LVIF_GROUPID;
+        lvI.stateMask = 0;
+        lvI.iSubItem = 0;
+        lvI.state = 0;
+        lvI.iItem = i;
+        lvI.lParam = (LPARAM)d->id;
+        lvI.iGroupId = d->type;
+        ListView_InsertItem(deviceListView, &lvI);
+        std::wstring deviceIdTemp = std::to_wstring(d->id);
+        ListView_SetItemText(deviceListView, i, 0, const_cast<LPWSTR>(&deviceIdTemp[0]));
+        ListView_SetItemText(deviceListView, i, 1, const_cast<LPWSTR>(d->productName.c_str()));
+        ListView_SetItemText(deviceListView, i, 2, const_cast<LPWSTR>(d->manufacturerName.c_str()));
+        std::wstring deviceInterfaceNameTemp(d->deviceInterfaceName.begin(), d->deviceInterfaceName.end());
+        ListView_SetItemText(deviceListView, i, 3, const_cast<LPWSTR>(&deviceInterfaceNameTemp[0]));
+        i++;
+    }
+    ListView_EnableGroupView(deviceListView, true);
+    ListView_SortItems(deviceListView, sortInt, true);
 }
 LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
     switch (msg) {
@@ -150,6 +177,7 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
                                 info->item.mask |= LVIF_PARAM;
                                 info->item.lParam = (LPARAM)std::stoi(info->item.pszText);
                                 ListView_SetItem(deviceListView,&info->item);
+                                SetWindowTextW(window,L"Device Binder - Unsaved");
                                 return true;
                             }
                         }
@@ -199,12 +227,45 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
         case WM_COMMAND: {
             switch (LOWORD(wparam)) {
                 case IDM_SAVE_MAPPING: {
-
+                    SetWindowTextW(window, L"Device Binder");
+                    for (int i = 0; i < ListView_GetItemCount(deviceListView);i++) {
+                        wchar_t DIN[1 << 12];
+                        ListView_GetItemText(deviceListView,i,3,DIN, sizeof(DIN) / sizeof(wchar_t));
+                        std::wstring tempDIN(DIN);
+                        for (std::shared_ptr<Device> d : DeviceManager::devices) {
+                            if (d->deviceInterfaceName == std::string(tempDIN.begin(),tempDIN.end())) {
+                                LVITEM item;
+                                item.mask = LVIF_PARAM;
+                                item.iItem = i;
+                                ListView_GetItem(deviceListView,&item);
+                                d->id = (int)item.lParam;
+                            }
+                        }
+                    }
+                    DeviceManager::saveMapping("mapping.mapping");
                     break;
                 }
-                case IDM_APPLY_MAPPING:
-                {
+                case IDM_APPLY_MAPPING: {
+                    OPENFILENAME ofn;
 
+                    wchar_t szFileName[MAX_PATH] = L"mapping.mapping";
+
+                    ZeroMemory(&ofn, sizeof(ofn));
+
+                    ofn.lStructSize = sizeof(ofn);
+                    ofn.hwndOwner = hwnd;
+                    ofn.lpstrFilter = L"Device Mapping (*.mapping)\0*.mapping\0Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
+                    ofn.lpstrFile = szFileName;
+                    ofn.nMaxFile = MAX_PATH;
+                    ofn.Flags = OFN_EXPLORER | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+                    ofn.lpstrDefExt = L"mapping";
+
+                    if (GetOpenFileName(&ofn)) {
+                        std::wstring filename(ofn.lpstrFile);
+                        DeviceManager::applyMapping(std::string(filename.begin(), filename.end()));
+                        DeviceManager::saveMapping("mapping.mapping");
+                        createListViewItems();
+                    }
                     break;
                 }
                 case IDM_FILE_EXPORT_MAPPING: {
@@ -316,9 +377,9 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             HMENU menubar = CreateMenu();
             HMENU file = CreateMenu();
 
-            AppendMenuW(file, MF_STRING, IDM_SAVE_MAPPING, L"Save Mapping");
+            AppendMenuW(file, MF_STRING, IDM_SAVE_MAPPING, L"Save Mapping\tCtrl + S");
             AppendMenuW(file, MF_STRING, IDM_APPLY_MAPPING, L"Apply Mapping (From File)");
-            AppendMenuW(file, MF_STRING, IDM_FILE_EXPORT_MAPPING, L"Export Mapping");
+            AppendMenuW(file, MF_STRING, IDM_FILE_EXPORT_MAPPING, L"Export Mapping\tCtrl + Shift + S");
             AppendMenuW(file, MF_SEPARATOR, 0, 0);
             AppendMenuW(file,MF_STRING,IDM_FILE_EXPORT_KEYBOARD_LOG,L"Export Keyboard Log");
             AppendMenuW(file, MF_STRING, IDM_FILE_EXPORT_MOUSE_LOG, L"Export Mouse Log");
@@ -434,29 +495,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             keyboardGroup.iGroupId = 1;
             ListView_InsertGroup(deviceListView, -1, &keyboardGroup);
 
-            int i = 0;
-            for (std::shared_ptr<Device> d : DeviceManager::devices) {
-                LVITEM lvI;
-                lvI.pszText = LPSTR_TEXTCALLBACK;
-                lvI.cchTextMax = 10;
-                lvI.mask = LVIF_TEXT | LVIF_STATE | LVIF_PARAM | LVIF_GROUPID;
-                lvI.stateMask = 0;
-                lvI.iSubItem = 0;
-                lvI.state = 0;
-                lvI.iItem = i;
-                lvI.lParam = (LPARAM)d->id;
-                lvI.iGroupId = d->type;
-                ListView_InsertItem(deviceListView, &lvI);
-                std::wstring deviceIdTemp = std::to_wstring(d->id);
-                ListView_SetItemText(deviceListView, i, 0, const_cast<LPWSTR>(&deviceIdTemp[0]));
-                ListView_SetItemText(deviceListView, i, 1, const_cast<LPWSTR>(d->productName.c_str()));
-                ListView_SetItemText(deviceListView, i, 2, const_cast<LPWSTR>(d->manufacturerName.c_str()));
-                std::wstring deviceInterfaceNameTemp(d->deviceInterfaceName.begin(), d->deviceInterfaceName.end());
-                ListView_SetItemText(deviceListView, i, 3, const_cast<LPWSTR>(&deviceInterfaceNameTemp[0]));
-                i++;
-            }
-            ListView_EnableGroupView(deviceListView,true);
-            ListView_SortItems(deviceListView, sortInt, true);
+            createListViewItems();
 
             ShowWindow(devicePane, SW_SHOW);
             UpdateWindow(devicePane);
@@ -718,7 +757,7 @@ int main() {
     //Creates Window
     constexpr int BASE_WIDTH = 1440;
     constexpr int BASE_HEIGHT = 810;
-    CreateWindow(wc.lpszClassName, wc.lpszMenuName, WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_CLIPCHILDREN, screen.right / 2 - BASE_WIDTH / 2, screen.bottom / 2 - BASE_HEIGHT / 2, BASE_WIDTH, BASE_HEIGHT, nullptr, nullptr, wc.hInstance, nullptr);
+    window = CreateWindow(wc.lpszClassName, wc.lpszMenuName, WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_CLIPCHILDREN, screen.right / 2 - BASE_WIDTH / 2, screen.bottom / 2 - BASE_HEIGHT / 2, BASE_WIDTH, BASE_HEIGHT, nullptr, nullptr, wc.hInstance, nullptr);
 
     MSG msg = { nullptr };
 
