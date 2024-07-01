@@ -19,6 +19,7 @@
 #define IDM_FILE_EXPORT_KEYBOARD_LOG 101
 #define IDM_FILE_EXPORT_MOUSE_LOG 102
 #define IDM_FILE_EXPORT_MAPPING 103
+#define IDM_APPLY_MAPPING 104
 #define MOUSE_POSITION 195
 #define CLEAR_MOUSE_LOG 196
 #define MOUSE_LOG_START_PAUSE 197
@@ -140,13 +141,17 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
         case WM_NOTIFY:{
             switch (((LPNMHDR)lparam)->code) {
                 case LVN_ENDLABELEDIT: {
-                    NMLVDISPINFOA* info = (LPNMLVDISPINFOA)lparam;
+                    NMLVDISPINFOW* info = (LPNMLVDISPINFOW)lparam;
 
                     if (info->item.pszText) {
-                        wchar_t buf[MAX_PATH];
-                        ListView_GetItemText(deviceListView, info->item.iItem, info->item.iSubItem, buf, MAX_PATH);
-                        std::wcout << buf << "\n";
+                        std::wstring text(info->item.pszText);
+                        if (text.size() <= 10) {
+                            if (DeviceManager::isNumber(std::string(text.begin(),text.end()))) {
+                                return true;
+                            }
+                        }
                     }
+                    return false;
                     break;
                 }
                 case LVN_COLUMNCLICK: {
@@ -159,7 +164,7 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
                     break;
                 }
                 //Makes it easier to edit label by just clicking on it
-                case NM_CLICK: {     
+                case NM_DBLCLK: {
                     NMITEMACTIVATE* info = (LPNMITEMACTIVATE)lparam;
                     //Id Column
                     if (info->iSubItem == 0) {
@@ -191,6 +196,11 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
         case WM_COMMAND: {
             switch (LOWORD(wparam)) {
                 case IDM_SAVE_MAPPING: {
+
+                    break;
+                }
+                case IDM_APPLY_MAPPING:
+                {
 
                     break;
                 }
@@ -304,6 +314,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             HMENU file = CreateMenu();
 
             AppendMenuW(file, MF_STRING, IDM_SAVE_MAPPING, L"Save Mapping");
+            AppendMenuW(file, MF_STRING, IDM_APPLY_MAPPING, L"Apply Mapping (From File)");
             AppendMenuW(file, MF_STRING, IDM_FILE_EXPORT_MAPPING, L"Export Mapping");
             AppendMenuW(file, MF_SEPARATOR, 0, 0);
             AppendMenuW(file,MF_STRING,IDM_FILE_EXPORT_KEYBOARD_LOG,L"Export Keyboard Log");
@@ -363,7 +374,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
             deviceListView = CreateWindow(WC_LISTVIEW,
                                              L"Devices",
-                                             WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_EDITLABELS | LVS_ALIGNTOP,
+                                             WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_EDITLABELS | LVS_ALIGNTOP | WS_BORDER,
                                              10, 20,
                                              1000,
                                              500,
