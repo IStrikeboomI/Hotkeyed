@@ -377,9 +377,9 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             HMENU menubar = CreateMenu();
             HMENU file = CreateMenu();
 
-            AppendMenuW(file, MF_STRING, IDM_SAVE_MAPPING, L"Save Mapping\tCtrl + S");
+            AppendMenuW(file, MF_STRING, IDM_SAVE_MAPPING, L"Save Mapping");
             AppendMenuW(file, MF_STRING, IDM_APPLY_MAPPING, L"Apply Mapping (From File)");
-            AppendMenuW(file, MF_STRING, IDM_FILE_EXPORT_MAPPING, L"Export Mapping\tCtrl + Shift + S");
+            AppendMenuW(file, MF_STRING, IDM_FILE_EXPORT_MAPPING, L"Export Mapping");
             AppendMenuW(file, MF_SEPARATOR, 0, 0);
             AppendMenuW(file,MF_STRING,IDM_FILE_EXPORT_KEYBOARD_LOG,L"Export Keyboard Log");
             AppendMenuW(file, MF_STRING, IDM_FILE_EXPORT_MOUSE_LOG, L"Export Mouse Log");
