@@ -73,6 +73,7 @@ bool CALLBACK setFont(HWND hwnd) {
 }
 bool sortIntAscending = false;
 int CALLBACK sortInt(LPARAM one, LPARAM two, LPARAM ascending) {
+    std::cout << one << " " << two << "\n";
     if (ascending) {
         if (one < two) {
             return -1;
@@ -142,11 +143,13 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
             switch (((LPNMHDR)lparam)->code) {
                 case LVN_ENDLABELEDIT: {
                     NMLVDISPINFOW* info = (LPNMLVDISPINFOW)lparam;
-
                     if (info->item.pszText) {
                         std::wstring text(info->item.pszText);
                         if (text.size() <= 10) {
                             if (DeviceManager::isNumber(std::string(text.begin(),text.end()))) {
+                                info->item.mask |= LVIF_PARAM;
+                                info->item.lParam = (LPARAM)std::stoi(info->item.pszText);
+                                ListView_SetItem(deviceListView,&info->item);
                                 return true;
                             }
                         }
