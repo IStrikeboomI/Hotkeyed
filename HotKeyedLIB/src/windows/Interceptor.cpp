@@ -10,7 +10,7 @@ void Interceptor::handleInput(const MSG& msg) {
 	char name[256];
 	unsigned int nameSize = sizeof(name);
 	unsigned int copied = GetRawInputDeviceInfoA(input.header.hDevice, RIDI_DEVICENAME, &name, &nameSize);
-	for (std::shared_ptr<Device> d : DeviceManager::devices) {
+	for (std::shared_ptr<Device> d : DeviceManager::getInstance().devices) {
 		if (d->deviceInterfaceName == name) {
 			if (input.header.dwType == RIM_TYPEKEYBOARD && d->type == RIM_TYPEKEYBOARD) {
 				Keyboard* keyboard = static_cast<Keyboard*>(d.get());

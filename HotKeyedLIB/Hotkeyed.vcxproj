@@ -146,6 +146,7 @@
     <ClCompile Include="src\Hotkeyed.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="lib\json\json.hpp" />
     <ClInclude Include="src\device\Mapping.h" />
     <ClInclude Include="src\device\Mouse.h" />
     <ClInclude Include="src\hotkey\action\ActionManager.h" />
@@ -158,6 +159,7 @@
     <ClInclude Include="src\device\DeviceManager.h" />
     <ClInclude Include="src\keyboard\DeviceKey.h" />
     <ClInclude Include="src\keyboard\DeviceKeys.h" />
+    <ClInclude Include="src\Util.h" />
     <ClInclude Include="src\windows\Interceptor.h" />
     <ClInclude Include="src\device\Keyboard.h" />
   </ItemGroup>

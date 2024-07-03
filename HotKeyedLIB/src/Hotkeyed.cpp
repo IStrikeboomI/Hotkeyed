@@ -9,9 +9,9 @@ void mouseCallback(const Mouse& mouse, const KEYSTATE state, const DeviceKey& ke
     std::wcout << mouse << " " << state << " " << key << "\n";
 }
 int main() {
-    DeviceManager::populate();
-    DeviceManager::createOrApplyMapping("mapping.mapping");
-    for (std::shared_ptr<Device> d : DeviceManager::devices) {
+    Mapping mapping("mapping.mapping");
+    DeviceManager::getInstance().setMapping(mapping);
+    for (std::shared_ptr<Device> d : DeviceManager::getInstance().devices) {
         std::cout << d->id << "\n";
     }
     return 0;
