@@ -146,6 +146,9 @@
     <Image Include="resources\icon\pause.ico" />
     <Image Include="resources\icon\start.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\Hotkeyed.lib" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

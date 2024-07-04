@@ -14,7 +14,6 @@
 #pragma comment (lib,"Gdiplus.lib")
 #pragma comment (lib,"Comctl32.lib")
 
-
 #define IDM_SAVE_MAPPING 100
 #define IDM_FILE_EXPORT_KEYBOARD_LOG 101
 #define IDM_FILE_EXPORT_MOUSE_LOG 102
@@ -28,6 +27,8 @@
 #define DEVICES 200
 #define KEYBOARD_LOG 201
 #define MOUSE_LOG 202
+
+Mapping mapping(std::filesystem::current_path().generic_string() + "/mapping.mapping");
 
 HFONT systemFont;
 
@@ -97,7 +98,7 @@ int CALLBACK sortInt(LPARAM one, LPARAM two, LPARAM ascending) {
 void createListViewItems() {
     ListView_DeleteAllItems(deviceListView);
     int i = 0;
-    for (std::shared_ptr<Device> d : DeviceManager::devices) {
+    for (std::shared_ptr<Device> d : DeviceManager::getInstance().devices) {
         LVITEM lvI;
         lvI.pszText = LPSTR_TEXTCALLBACK;
         lvI.cchTextMax = 10;
@@ -172,8 +173,8 @@ LRESULT CALLBACK childWindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
                     NMLVDISPINFOW* info = (LPNMLVDISPINFOW)lparam;
                     if (info->item.pszText) {
                         std::wstring text(info->item.pszText);
-                        if (text.size() <= 10) {
-                            if (DeviceManager::isNumber(std::string(text.begin(),text.end()))) {
+                        if (text.size() <= 9) {
+                            if (Util::isNumber(std::string(text.begin(),text.end()))) {
                                 info->item.mask |= LVIF_PARAM;
                                 info->item.lParam = (LPARAM)std::stoi(info->item.pszText);
                                 ListView_SetItem(deviceListView,&info->item);
@@ -232,7 +233,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
                         wchar_t DIN[1 << 12];
                         ListView_GetItemText(deviceListView,i,3,DIN, sizeof(DIN) / sizeof(wchar_t));
                         std::wstring tempDIN(DIN);
-                        for (std::shared_ptr<Device> d : DeviceManager::devices) {
+                        for (std::shared_ptr<Device> d : DeviceManager::getInstance().devices) {
                             if (d->deviceInterfaceName == std::string(tempDIN.begin(),tempDIN.end())) {
                                 LVITEM item;
                                 item.mask = LVIF_PARAM;
@@ -242,7 +243,8 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
                             }
                         }
                     }
-                    DeviceManager::saveMapping("mapping.mapping");
+                    mapping.saveMapping();
+                    DeviceManager::getInstance().setMapping(mapping);
                     break;
                 }
                 case IDM_APPLY_MAPPING: {
@@ -262,8 +264,9 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
                     if (GetOpenFileName(&ofn)) {
                         std::wstring filename(ofn.lpstrFile);
-                        DeviceManager::applyMapping(std::string(filename.begin(), filename.end()));
-                        DeviceManager::saveMapping("mapping.mapping");
+                        Mapping newMapping(std::string(filename.begin(), filename.end()));
+                        DeviceManager::getInstance().setMapping(newMapping);
+                        mapping.saveMapping();
                         createListViewItems();
                     }
                     break;
@@ -285,7 +288,7 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
                     if (GetSaveFileName(&ofn)) {
                         std::wstring filename(ofn.lpstrFile);
-                        DeviceManager::saveMapping(std::string(filename.begin(),filename.end()));
+                        Mapping newMapping(std::string(filename.begin(),filename.end()));
                     }
                     break;
                 }
@@ -419,10 +422,10 @@ LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             HINSTANCE hInstance = (HINSTANCE)GetWindowLong(hwnd, -6);
 
             devicePane = CreateWindow(L"Pane", L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, tabHeight, window.right, window.bottom, hwnd, (HMENU)DEVICES, hInstance, 0);
-            int deviceCount = DeviceManager::devices.size();
+            int deviceCount = DeviceManager::getInstance().devices.size();
             int keyboardCount = 0;
             int mouseCount = 0;
-            for (std::shared_ptr<Device> d : DeviceManager::devices) {
+            for (std::shared_ptr<Device> d : DeviceManager::getInstance().devices) {
                 if (d->type == RIM_TYPEKEYBOARD) {
                     keyboardCount++;
                 }
@@ -707,8 +710,7 @@ void mouseInterceptor(const Mouse& mouse, const KEYSTATE state, const DeviceKey&
     }
 }
 int main() {
-	DeviceManager::populate();
-	DeviceManager::createOrApplyMapping("mapping.mapping");
+	DeviceManager::getInstance().setMapping(mapping);
 
     Interceptor interceptor;
     interceptor.keyboardGlobalInterceptors.push_back(keyboardInterceptor);

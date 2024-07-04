@@ -41,4 +41,7 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\Hotkeyed.lib" />
+  </ItemGroup>
 </Project>

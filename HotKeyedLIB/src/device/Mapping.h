@@ -15,7 +15,6 @@ public:
 	std::map<std::string, int> mapping;
 
 	Mapping(std::string filename="mapping.mapping");
-	//Mapping(const Mapping&) = default;
 
 	void saveMapping();
 	void applyMapping();
