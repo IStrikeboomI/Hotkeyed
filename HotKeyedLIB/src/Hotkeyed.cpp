@@ -1,4 +1,4 @@
- #include <iostream>
+#include <iostream>
 #include "windows/Interceptor.h"
 #include "hotkey/HotkeyManager.h"
 #include "keyboard/DeviceKeys.h"
