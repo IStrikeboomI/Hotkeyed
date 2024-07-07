@@ -1,5 +1,6 @@
 #pragma once
 #include "Hotkey.h"
+#include <device/Keyboard.h>
 #include <vector>
 class HotkeyManager {
 private:

@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\script\Script.cpp" />
     <ClCompile Include="src\hotkey\action\Action.cpp" />
     <ClCompile Include="src\hotkey\action\ActionManager.cpp" />
     <ClCompile Include="src\hotkey\action\MoveMouse.cpp" />
@@ -143,6 +144,7 @@
     <Library Include="lib\Hotkeyed.lib" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\script\Script.h" />
     <ClInclude Include="src\hotkey\action\Action.h" />
     <ClInclude Include="src\hotkey\action\ActionManager.h" />
     <ClInclude Include="src\hotkey\action\MoveMouse.h" />
