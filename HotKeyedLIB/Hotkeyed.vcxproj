@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -105,6 +105,8 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,16 +133,10 @@
   <ItemGroup>
     <ClCompile Include="src\device\Mapping.cpp" />
     <ClCompile Include="src\device\Mouse.cpp" />
-    <ClCompile Include="src\hotkey\action\Action.cpp" />
-    <ClCompile Include="src\hotkey\action\ActionManager.cpp" />
-    <ClCompile Include="src\hotkey\action\MoveMouse.cpp" />
     <ClCompile Include="src\keyboard\DeviceKey.cpp" />
     <ClCompile Include="src\keyboard\DeviceKeys.cpp" />
-    <ClCompile Include="src\hotkey\HotkeyManager.cpp" />
-    <ClCompile Include="src\hotkey\Hotkey.cpp" />
     <ClCompile Include="src\device\Device.cpp" />
     <ClCompile Include="src\device\DeviceManager.cpp" />
-    <ClCompile Include="src\hotkey\Key.h" />
     <ClCompile Include="src\windows\Interceptor.cpp" />
     <ClCompile Include="src\device\Keyboard.cpp" />
     <ClCompile Include="src\Hotkeyed.cpp" />
@@ -159,6 +155,7 @@
     <ClInclude Include="src\device\DeviceManager.h" />
     <ClInclude Include="src\keyboard\DeviceKey.h" />
     <ClInclude Include="src\keyboard\DeviceKeys.h" />
+    <ClInclude Include="src\keyboard\Key.h" />
     <ClInclude Include="src\Util.h" />
     <ClInclude Include="src\windows\Interceptor.h" />
     <ClInclude Include="src\device\Keyboard.h" />

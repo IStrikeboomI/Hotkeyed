@@ -7,7 +7,7 @@
 #include <vector>
 #include <functional>
 #include "../device/DeviceManager.h"
-#include "../hotkey/Key.h"
+#include "../keyboard/Key.h"
 
 #pragma comment (lib,"Hid.lib")
 //This class intercepts keyboard messages and sets up other needed

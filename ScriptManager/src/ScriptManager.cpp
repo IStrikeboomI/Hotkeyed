@@ -1,8 +1,8 @@
 #include <iostream>
 #include <device/DeviceManager.h>
 #include <windows/Interceptor.h>
-
+#include "script/Script.h"
 int main() {
-    std::cout << "Hello World!\n";
+    Script testScript("testScript.htky");
     return 0;
 }

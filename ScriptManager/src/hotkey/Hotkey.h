@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <functional>
-#include "Key.h"
+#include <keyboard/Key.h>
 struct Hotkey {
 	std::vector<Key> keys;
 	std::function<void()> callback;

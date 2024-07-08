@@ -1,6 +1,5 @@
 #include <iostream>
 #include "windows/Interceptor.h"
-#include "hotkey/HotkeyManager.h"
 #include "keyboard/DeviceKeys.h"
 void keyboardCallback(const Keyboard& mouse, const KEYSTATE state, const DeviceKey& key) {
     std::wcout << mouse << " " << state << " " << key << "\n";

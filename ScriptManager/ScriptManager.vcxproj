@@ -151,7 +151,6 @@
     <ClInclude Include="src\hotkey\action\Parameter.h" />
     <ClInclude Include="src\hotkey\Hotkey.h" />
     <ClInclude Include="src\hotkey\HotkeyManager.h" />
-    <ClInclude Include="src\hotkey\Key.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitattributes" />
