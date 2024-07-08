@@ -1,6 +1,6 @@
 #include "Script.h"
 
-Script::Script(std::string&& filename) : filename(filename) {
+Script::Script(const std::string& filename) : filename(filename) {
 	std::ifstream file(filename);
 	std::string str;
 	while (std::getline(file,str)) {

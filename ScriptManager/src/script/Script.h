@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <string>
 #include <map>
 #include <fstream>
@@ -10,6 +11,6 @@ private:
 	std::string filename;
 	std::map<Hotkey, std::unique_ptr<Action>> hotkeys;
 public:
-	Script(std::string&& filename);
+	Script(const std::string& filename);
 };
 
