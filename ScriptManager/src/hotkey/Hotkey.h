@@ -1,12 +1,15 @@
 #pragma once
 #include <vector>
-#include <functional>
+#include <memory>
 #include <keyboard/Key.h>
-struct Hotkey {
+#include "action/Action.h"
+class Hotkey {
+private:
 	std::vector<Key> keys;
-	std::function<void()> callback;
-
-	Hotkey(std::vector<Key>& keys, std::function<void()> callback) : keys(keys), callback(callback) {}
-																					
+	std::vector<std::unique_ptr<Action>> actions;
+public:
+	Hotkey(std::vector<Key>& keys);
+	
+	void addAction(const Action& action);
 };
 

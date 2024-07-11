@@ -9,7 +9,7 @@
 class Script {
 private:
 	std::string filename;
-	std::map<Hotkey, std::unique_ptr<Action>> hotkeys;
+	std::vector<Hotkey> hotkeys;
 public:
 	Script(const std::string& filename);
 };
