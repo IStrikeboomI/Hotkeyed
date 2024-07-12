@@ -6,7 +6,7 @@
 class Hotkey {
 private:
 	std::vector<Key> keys;
-	std::vector<std::unique_ptr<Action>> actions;
+	//std::vector<std::shared_ptr<Action>> actions;
 public:
 	Hotkey(std::vector<Key>& keys);
 	

@@ -2,3 +2,7 @@
 Ctrl + 8 + a + s {
 	MoveMouse(800,900);
 }
+
+s + b + + + [ {
+	Print("test");
+}

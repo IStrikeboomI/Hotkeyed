@@ -128,8 +128,8 @@ namespace DeviceKeys {
 		DeviceKey(VK_OEM_2, { "/", "?", "Forward Slash", "Question", "Question Mark"}),
 		DeviceKey(VK_OEM_5, { "\\", "Back Slash" }),
 		DeviceKey(VK_OEM_3, { "`", "~", "Grave", "Tilde"}),
-		DeviceKey(VK_OEM_4, { "[", "{", "Left Bracket", "Left Braces", "Left Brace", "Left Curly Bracket"}),
-		DeviceKey(VK_OEM_6, { "]", "}", "Right Bracket", "Right Braces", "Right Brace", "Right Curly Bracket" }),
+		DeviceKey(VK_OEM_4, { "[", "Left Bracket", "Left Braces", "Left Brace", "Left Curly Bracket"}),
+		DeviceKey(VK_OEM_6, { "]", "Right Bracket", "Right Braces", "Right Brace", "Right Curly Bracket" }),
 		DeviceKey(VK_OEM_7, { "'", "\"", "Quotation", "Quotation Mark"}),
 		DeviceKey(VK_PLAY, { "Play" }),
 		DeviceKey(VK_ZOOM, { "Zoom" })
