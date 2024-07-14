@@ -62,6 +62,9 @@
     <ClInclude Include="src\script\Script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\script\CodeBlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitattributes" />

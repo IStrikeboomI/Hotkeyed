@@ -4,5 +4,5 @@ Ctrl + 8 + a + s {
 }
 
 s + b + + + [ {
-	Print("test");
+	Print("test {} ta");
 }
