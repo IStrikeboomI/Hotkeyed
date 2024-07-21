@@ -4,5 +4,10 @@ Ctrl + 8 + a + s {
 }
 
 s + b + + + [ {
-	Print("test {} ta");
+	Print("test {} ta {} {{}}");
+}
+
+k + 2 + 4 {
+	{}
+	{{}}
 }

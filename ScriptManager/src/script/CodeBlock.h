@@ -11,4 +11,7 @@ struct CodeBlock {
 		out << "[start = " << c.start << ", end = " << c.end << "]";
 		return out;
 	}
+	bool operator<(const CodeBlock& c) const {
+		return start < c.start;
+	}
 };

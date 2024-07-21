@@ -17,7 +17,11 @@ Script::Script(const std::string& filename) : filename(filename) {
 		}
 		if (script[i] == '}') {
 			if (!bracketAtStack.empty()) {
-				codeblocks.push_back(CodeBlock(bracketAtStack.top(), i));
+				//filter out code blocks that are isolated (not inside another code block)
+				//this filters out anything in quotations
+				if (bracketAtStack.size() <= 1) {
+					codeblocks.push_back(CodeBlock(bracketAtStack.top(), i));
+				}
 				bracketAtStack.pop();
 			}
 		}
