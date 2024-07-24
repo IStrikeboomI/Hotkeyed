@@ -144,7 +144,7 @@
     <Library Include="lib\Hotkeyed.lib" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\script\CodeBlock.h" />
+    <ClInclude Include="src\script\TextBlock.h" />
     <ClInclude Include="src\script\Script.h" />
     <ClInclude Include="src\hotkey\action\Action.h" />
     <ClInclude Include="src\hotkey\action\ActionManager.h" />

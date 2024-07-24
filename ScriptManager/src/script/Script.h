@@ -10,12 +10,14 @@
 #include <keyboard/DeviceKeys.h>
 #include "../hotkey/Hotkey.h"
 #include "../hotkey/action/Action.h"
-#include "CodeBlock.h"
+#include "TextBlock.h"
+#include <Util.h>
 class Script {
 private:
 	std::string filename;
 	std::vector<Hotkey> hotkeys;
-	std::vector<CodeBlock> codeblocks;
+	std::vector<TextBlock> codeblocks;
+	std::vector<TextBlock> hotkeyBlocks;
 	std::string script;
 public:
 	Script(const std::string& filename);

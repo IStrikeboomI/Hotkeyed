@@ -62,7 +62,7 @@
     <ClInclude Include="src\script\Script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\script\CodeBlock.h">
+    <ClInclude Include="src\script\TextBlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
