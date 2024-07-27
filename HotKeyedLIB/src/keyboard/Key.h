@@ -1,5 +1,6 @@
 #pragma once
 #include "DeviceKey.h"
+#include "DeviceIDRule.h"
 enum KEYSTATE {
 	DOWN,
 	UP,
@@ -11,6 +12,6 @@ struct Key {
 	const DeviceKey key;
 	const KEYSTATE state = DOWN;
 	//If -1, then global to all keyboards
-	const int deviceId;
-	Key(const DeviceKey& key, const KEYSTATE state = DOWN, const int deviceId = -1) : key(key), state(state), deviceId(deviceId) {};
+	std::vector<DeviceIDRule> deviceIDs;
+	Key(const DeviceKey& key, const KEYSTATE state = DOWN, const std::vector<DeviceIDRule>& deviceIds = std::vector<DeviceIDRule>(1,DeviceIDRule())) : key(key), state(state), deviceIDs(deviceIDs) {};
 };

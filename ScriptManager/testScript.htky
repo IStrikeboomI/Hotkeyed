@@ -1,5 +1,5 @@
 
-Ctrl + 8 + a + s {
+Ctrl + 8 (UP, !9) + a + s {
 	MoveMouse(800,900);
 }
 
@@ -7,15 +7,15 @@ s + b + + + [ {
 	Print("test {} ta {} {{}}");
 }
 
-k + 2 + 4 
+k + 2 (Down, 1, 2) + 4 
 
 
 {
 
 }
 
-k + a
- + CTRL 
+k + a (1-10)
+ + CTRL (up, !2-3)
 
 
 {

@@ -153,6 +153,7 @@
     <ClInclude Include="src\hotkey\Hotkey.h" />
     <ClInclude Include="src\device\Device.h" />
     <ClInclude Include="src\device\DeviceManager.h" />
+    <ClInclude Include="src\keyboard\DeviceIDRule.h" />
     <ClInclude Include="src\keyboard\DeviceKey.h" />
     <ClInclude Include="src\keyboard\DeviceKeys.h" />
     <ClInclude Include="src\keyboard\Key.h" />

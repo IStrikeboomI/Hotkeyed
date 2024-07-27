@@ -95,5 +95,8 @@
     <ClInclude Include="src\keyboard\Key.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\keyboard\DeviceIDRule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
