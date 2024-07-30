@@ -2,12 +2,16 @@
 #include <vector>
 #include <sstream>
 #include <string>
+#include <algorithm>
 
 namespace Util {
 	static inline bool isNumber(const std::string& s) {
 		return !s.empty() && std::find_if(s.begin(),
 										  s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
 	}
+    static inline bool caseInsensitiveEquals(const std::string& s1, const std::string& s2) {
+        return std::ranges::equal(s1, s2, [](auto a, auto b) {return std::tolower(a) == std::tolower(b); });
+    }
     static inline std::vector<std::string> split(std::string& s, const std::string& delimiter) {
         size_t pos_start = 0, pos_end, delim_len = delimiter.length();
         std::string token;

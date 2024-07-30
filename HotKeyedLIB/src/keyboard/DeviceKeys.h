@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <string_view>
 #include <memory>
+#include "../Util.h"
 
 #include "DeviceKey.h"
 
@@ -19,7 +20,7 @@ namespace DeviceKeys {
 	static const DeviceKey getByName(const std::string& name) {
 		for (DeviceKey key : keys) {
 			for (std::string_view n : key.names) {
-				if (std::ranges::equal(std::string_view(name), n, [](auto a, auto b) {return std::tolower(a) == std::tolower(b); })) {
+				if (Util::caseInsensitiveEquals(std::string{n},name)) {
 					return key;
 				}
 			}

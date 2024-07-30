@@ -10,8 +10,7 @@ void mouseCallback(const Mouse& mouse, const KEYSTATE state, const DeviceKey& ke
 int main() {
     Mapping mapping("mapping.mapping");
     DeviceManager::getInstance().setMapping(mapping);
-    for (std::shared_ptr<Device> d : DeviceManager::getInstance().devices) {
-        std::cout << d->id << "\n";
-    }
+    Key k(DeviceKeys::getByName("d"), UP, { DeviceIDRule(4673) });
+    std::cout << k.deviceIDs.size() << "\n";
     return 0;
 }
