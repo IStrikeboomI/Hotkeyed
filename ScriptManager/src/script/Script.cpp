@@ -155,12 +155,5 @@ Script::Script(const std::string& filename) : filename(filename) {
 			std::cout << k.deviceIDs.size() << " ";
 		}
 	}
-	//Add hotkeys
-	//Amount of hotkeys is equal to {} (LCB and RCB) pairs
-	//int indexAt = 0;
-	//for (int i = 0; i < std::min(LCBamount, RCBamount); i++) {
-	//	int hotkeyStart = script.find('{', indexAt);
-	//	
-	//	std::string justHotkey = script.substr();
-	//}
+
 }
