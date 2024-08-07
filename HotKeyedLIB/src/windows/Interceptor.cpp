@@ -17,6 +17,7 @@ void Interceptor::handleInput(const MSG& msg) {
 				for (auto callback : keyboardGlobalInterceptors) {
 					callback(*keyboard, input.data.keyboard.Flags == 0 ? DOWN : UP, DeviceKeys::getByVKey(input.data.keyboard.VKey));
 				}
+				activeKeyStates.
 			}
 			if (input.header.dwType == RIM_TYPEMOUSE && d->type == RIM_TYPEMOUSE) {
 				POINT pos;

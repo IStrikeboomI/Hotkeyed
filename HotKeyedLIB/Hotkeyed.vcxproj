@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\windows\ActiveKeyStates.cpp" />
     <ClCompile Include="src\device\Mapping.cpp" />
     <ClCompile Include="src\device\Mouse.cpp" />
     <ClCompile Include="src\keyboard\DeviceKey.cpp" />
@@ -142,6 +143,7 @@
     <ClCompile Include="src\Hotkeyed.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\windows\ActiveKeyStates.h" />
     <ClInclude Include="lib\json\json.hpp" />
     <ClInclude Include="src\device\Mapping.h" />
     <ClInclude Include="src\device\Mouse.h" />

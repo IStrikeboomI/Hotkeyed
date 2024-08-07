@@ -8,6 +8,7 @@
 #include <functional>
 #include "../device/DeviceManager.h"
 #include "../keyboard/Key.h"
+#include "ActiveKeyStates.h"
 
 #pragma comment (lib,"Hid.lib")
 //This class intercepts keyboard messages and sets up other needed
@@ -15,9 +16,13 @@ class Interceptor {
 private:
 	WNDCLASS wc;
 	void handleInput(const MSG& msg);
+
 public:
+	ActiveKeyStates activeKeyStates;
+
 	std::vector<std::function<void(const Keyboard& keyboard,const KEYSTATE state, const DeviceKey& key)>> keyboardGlobalInterceptors;
 	std::vector<std::function<void(const Mouse& mouse, const KEYSTATE state, const DeviceKey& key, int x, int y)>> mouseGlobalInterceptors;
+
 	Interceptor();
 
 	void begin();

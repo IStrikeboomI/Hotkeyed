@@ -13,4 +13,7 @@ struct DeviceKey {
 	friend std::wostream& operator<<(std::wostream& out, const DeviceKey& c);
 	friend std::ostream& operator<<(std::ostream& out, const DeviceKey& c);
 	bool operator<(const DeviceKey& rhs) const;
+	bool isMouse();
+	bool isKeyboard();
+	bool isNone();
 };

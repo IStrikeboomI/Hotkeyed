@@ -42,6 +42,9 @@
     <ClCompile Include="src\device\Mapping.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\windows\ActiveKeyStates.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\device\Keyboard.h">
@@ -96,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\keyboard\DeviceIDRule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\windows\ActiveKeyStates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
