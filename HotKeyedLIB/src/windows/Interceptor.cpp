@@ -17,7 +17,11 @@ void Interceptor::handleInput(const MSG& msg) {
 				for (auto callback : keyboardGlobalInterceptors) {
 					callback(*keyboard, input.data.keyboard.Flags == 0 ? DOWN : UP, DeviceKeys::getByVKey(input.data.keyboard.VKey));
 				}
-				activeKeyStates.
+				if (input.data.keyboard.Flags == 0) {
+					activeKeyStates.addKeyDown(DeviceKeys::getByVKey(input.data.keyboard.VKey),keyboard->id);
+				} else if (input.data.keyboard.Flags == 1) {
+					activeKeyStates.removeKeyDown(DeviceKeys::getByVKey(input.data.keyboard.VKey), keyboard->id);
+				}
 			}
 			if (input.header.dwType == RIM_TYPEMOUSE && d->type == RIM_TYPEMOUSE) {
 				POINT pos;
@@ -47,7 +51,24 @@ void Interceptor::handleInput(const MSG& msg) {
 					if ((input.data.mouse.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_UP) == RI_MOUSE_MIDDLE_BUTTON_UP) {
 						callback(*mouse, UP, DeviceKeys::getByVKey(VK_MBUTTON), x, y);
 					}
-
+				}
+				if ((input.data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) == RI_MOUSE_LEFT_BUTTON_DOWN) {
+					activeKeyStates.addKeyDown(DeviceKeys::getByVKey(VK_LBUTTON), mouse->id);
+				}
+				if ((input.data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP) == RI_MOUSE_LEFT_BUTTON_UP) {
+					activeKeyStates.removeKeyDown(DeviceKeys::getByVKey(VK_LBUTTON), mouse->id);
+				}
+				if ((input.data.mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN) == RI_MOUSE_RIGHT_BUTTON_DOWN) {
+					activeKeyStates.addKeyDown(DeviceKeys::getByVKey(VK_RBUTTON), mouse->id);
+				}
+				if ((input.data.mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP) == RI_MOUSE_RIGHT_BUTTON_UP) {
+					activeKeyStates.removeKeyDown(DeviceKeys::getByVKey(VK_RBUTTON), mouse->id);
+				}
+				if ((input.data.mouse.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN) == RI_MOUSE_MIDDLE_BUTTON_DOWN) {
+					activeKeyStates.addKeyDown(DeviceKeys::getByVKey(VK_MBUTTON), mouse->id);
+				}
+				if ((input.data.mouse.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_UP) == RI_MOUSE_MIDDLE_BUTTON_UP) {
+					activeKeyStates.removeKeyDown(DeviceKeys::getByVKey(VK_MBUTTON), mouse->id);
 				}
 			}
 		}

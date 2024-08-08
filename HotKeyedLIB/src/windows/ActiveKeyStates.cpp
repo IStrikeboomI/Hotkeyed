@@ -9,13 +9,6 @@ KEYSTATE ActiveKeyStates::isKeyBeingUsed(const Key& k) {
             }
         }
     }
-    if (upKeys.contains(dk)) {
-        for (int id : upKeys[dk]) {
-            if (k.isDeviceIdValid(id)) {
-                return UP;
-            }
-        }
-    }
     return NONE;
 }
 
@@ -30,19 +23,23 @@ void ActiveKeyStates::addKeyDown(const DeviceKey& key, int deviceId) {
 void ActiveKeyStates::removeKeyDown(const DeviceKey& key, int deviceId) {
     if (downKeys.contains(key)) {
         downKeys[key].erase(downKeys[key].find(deviceId));
+        if (downKeys[key].size() == 0) {
+            downKeys.erase(downKeys.find(key));
+        }
     }
 }
 
-void ActiveKeyStates::addKeyUp(const DeviceKey& key, int deviceId) {
-    if (upKeys.contains(key)) {
-        upKeys[key].insert(deviceId);
-    } else {
-        upKeys[key] = { deviceId };
+std::ostream& operator<<(std::ostream& out, const ActiveKeyStates& c) {
+    out << "{";
+    for (auto const& [key, value] : c.downKeys) {
+        out << key.names[0];
+        out << ": {";
+        for (int id : value) {
+            out << id;
+            out << ", ";
+        }
+        out << "}, ";
     }
-}
-
-void ActiveKeyStates::removeKeyUp(const DeviceKey& key, int deviceId) {
-    if (upKeys.contains(key)) {
-        upKeys[key].erase(upKeys[key].find(deviceId));
-    }
+    out << "}";
+    return out;
 }
