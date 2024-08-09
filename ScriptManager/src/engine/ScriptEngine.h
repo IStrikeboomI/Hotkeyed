@@ -5,7 +5,7 @@
 #include <windows/Interceptor.h>
 class ScriptEngine {
 private:
-	std::thread interceptorThread;
+	Interceptor interceptor;
 	std::vector<Script> scripts;
 public:
 	ScriptEngine();
