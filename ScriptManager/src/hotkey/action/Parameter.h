@@ -13,6 +13,7 @@ public:
 			  const bool optional = false) : type(type), name(name), description(description), optional(optional) {};
 };
 namespace ParameterType {
+	const std::string ANY = "any";
 	const std::string INT = "int";
 	const std::string STRING = "string";
 };

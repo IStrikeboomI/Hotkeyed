@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\hotkey\action\Print.cpp" />
     <ClCompile Include="src\engine\ScriptEngine.cpp" />
     <ClCompile Include="src\script\Script.cpp" />
     <ClCompile Include="src\hotkey\action\Action.cpp" />
@@ -145,6 +146,7 @@
     <Library Include="lib\Hotkeyed.lib" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\hotkey\action\Print.h" />
     <ClInclude Include="src\engine\ScriptEngine.h" />
     <ClInclude Include="src\script\TextBlock.h" />
     <ClInclude Include="src\script\Script.h" />
