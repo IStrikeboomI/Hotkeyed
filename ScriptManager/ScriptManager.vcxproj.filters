@@ -44,9 +44,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="lib\Hotkeyed.lib" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="src\hotkey\action\Action.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -81,5 +78,8 @@
   <ItemGroup>
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\Hotkeyed.lib" />
   </ItemGroup>
 </Project>

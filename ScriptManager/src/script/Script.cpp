@@ -155,5 +155,6 @@ Script::Script(const std::string& filename) : filename(filename) {
 			std::cout << k.deviceIDs.size() << " ";
 		}
 	}
+	std::cout << "\n";
 
 }

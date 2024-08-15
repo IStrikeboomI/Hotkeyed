@@ -143,9 +143,6 @@
     <ClCompile Include="src\ScriptManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="lib\Hotkeyed.lib" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="src\hotkey\action\Print.h" />
     <ClInclude Include="src\engine\ScriptEngine.h" />
     <ClInclude Include="src\script\TextBlock.h" />
@@ -160,6 +157,9 @@
   <ItemGroup>
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\Hotkeyed.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
