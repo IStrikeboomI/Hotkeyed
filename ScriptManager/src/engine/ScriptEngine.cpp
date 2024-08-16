@@ -2,10 +2,22 @@
 
 void ScriptEngine::keyboardInterceptor(const Keyboard& keyboard, const KEYSTATE state, const DeviceKey& key) {
 	std::cout << keyboard.id << "\n";
-	for (Script s : this->scripts) {
-		//if () {
-		//
-		//}
+	for (Script s : scripts) {
+		for (Hotkey h : s.hotkeys) {
+			for (Key k : h.keys) {
+				if (k.key.value == key.value && k.isDeviceIdValid(keyboard.id)) {
+					bool allKeysDown = true;
+					for (Key kk : h.keys) {
+						if (interceptor.activeKeyStates.isKeyBeingUsed(kk) != 0) {
+							allKeysDown = false;
+						}
+					}
+					if (allKeysDown) {
+						std::cout << "hotkey activated" << "\n";
+					}
+				}
+			}
+		}
 	}
 	
 }
@@ -20,7 +32,6 @@ ScriptEngine::ScriptEngine() {
 
 void ScriptEngine::start() {
 	std::thread interceptorThread([&] {
-		std::cout << interceptor.keyboardGlobalInterceptors.size() << "\n";
 		interceptor.begin();
 	});
 	interceptorThread.join();

@@ -15,11 +15,11 @@
 class Script {
 private:
 	std::string filename;
-	std::vector<Hotkey> hotkeys;
 	std::vector<TextBlock> codeblocks;
 	std::vector<TextBlock> hotkeyBlocks;
 	std::string script;
 public:
+	std::vector<Hotkey> hotkeys;
 	Script(const std::string& filename);
 };
 
