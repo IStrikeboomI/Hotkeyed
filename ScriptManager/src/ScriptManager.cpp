@@ -4,8 +4,9 @@
 #include "script/Script.h"
 #include "engine/ScriptEngine.h"
 int main() {
-    //Mapping mapping(std::filesystem::current_path().generic_string() + "/mapping.mapping");
-    //DeviceManager::getInstance().setMapping(mapping);
+    DeviceManager::getInstance().populate();
+    Mapping mapping(std::filesystem::current_path().generic_string() + "/mapping.mapping");
+    DeviceManager::getInstance().setMapping(mapping);
 
     ScriptEngine engine;
     Script testScript("testScript.htky");
