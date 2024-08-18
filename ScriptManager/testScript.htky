@@ -1,20 +1,28 @@
 
-Ctrl + 8 (UP, !9) + a + s {
+MoveMouse(100,100);
+
+MoveMouse(150,100);
+
+function testFunction() {
+	Print("function print");
+}
+
+[Ctrl + 8 (UP, !9) + a + s] {
 	MoveMouse(800,900);
 }
 
-s + b + + + [ {
+[s + b + + + [] {
 	Print("test {} ta {} {{}}");
 }
 
-k + 2 (Down, 1, 2) + 4 
+[k + 2 (Down, 1, 2) + 4]
 
 
 {
 
 }
-
-k + a (1-10)
+Print("Global Block test")
+[k + a (1-10)]
  + CTRL (up, !2-3)
 
 
@@ -22,6 +30,6 @@ k + a (1-10)
 
 }
 
-s + a + 0 {
+[s + a + 0] {
 	Print("real");
 }

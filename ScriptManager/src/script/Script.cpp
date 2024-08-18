@@ -26,6 +26,7 @@ Script::Script(const std::string& filename) : filename(filename) {
 			}
 		}
 	}
+	
 	//Add hotkeys
 	// Hotkeys are formatted [Key Code 1] + [Key Code 2] + [Key Code 3] + ...
 	// Where keycodes are case-insensitive https://github.com/IStrikeboomI/Hotkeyed/blob/master/HotKeyedLIB/src/keyboard/DeviceKeys.cpp
@@ -145,6 +146,11 @@ Script::Script(const std::string& filename) : filename(filename) {
 		for (TextBlock c : hotkeyBlocks) {
 			if (i >= c.start && i <= c.end) {
 				SetConsoleTextAttribute(hConsole, BACKGROUND_RED);
+			}
+		}
+		for (TextBlock c : globalLines) {
+			if (i >= c.start && i <= c.end) {
+				SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE);
 			}
 		}
 		std::cout << script[i];

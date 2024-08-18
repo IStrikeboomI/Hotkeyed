@@ -17,6 +17,8 @@ private:
 	std::string filename;
 	std::vector<TextBlock> codeblocks;
 	std::vector<TextBlock> hotkeyBlocks;
+	std::vector<TextBlock> functionBlocks;
+	std::vector<TextBlock> globalLines;
 	std::string script;
 public:
 	std::vector<Hotkey> hotkeys;
