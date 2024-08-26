@@ -22,8 +22,8 @@ function testFunction() {
 
 }
 Print("Global Block test")
-[k + a (1-10)]
- + CTRL (up, !2-3)
+[k + a (1-10)
+ + CTRL (up, !2-3)]
 
 
 {

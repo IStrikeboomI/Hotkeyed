@@ -11,6 +11,6 @@ int main() {
     ScriptEngine engine;
     Script testScript("testScript.htky");
     engine.addScript(testScript);
-    engine.start();
+    //engine.start();
     return 0;
 }

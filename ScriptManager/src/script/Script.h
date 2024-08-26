@@ -12,15 +12,21 @@
 #include "../hotkey/action/Action.h"
 #include "TextBlock.h"
 #include <Util.h>
+
+//Characters/Strings that cannot be the start of functions and variables
+
 class Script {
 private:
 	std::string filename;
 	std::vector<TextBlock> codeblocks;
 	std::vector<TextBlock> hotkeyBlocks;
+	std::vector<TextBlock> squareBracketBlocks;
 	std::vector<TextBlock> functionBlocks;
 	std::vector<TextBlock> globalLines;
 	std::string script;
 public:
+	static constexpr std::vector<std::string> ineligibleStartingCharacters = {""};
+
 	std::vector<Hotkey> hotkeys;
 	Script(const std::string& filename);
 };

@@ -9,7 +9,7 @@ Script::Script(const std::string& filename) : filename(filename) {
 			script += line + "\n";
 		}
 	}
-	//Add all isolatedd bracket pairs
+	//Add all isolated bracket pairs
 	std::stack<int> bracketAtStack;
 	for (int i = 0; i < script.size();i++) {
 		if (script[i] == '{') {
@@ -26,12 +26,22 @@ Script::Script(const std::string& filename) : filename(filename) {
 			}
 		}
 	}
+	int squareBracketAt = -1;
+	for (int i = 0; i < script.size(); i++) {
+		if (script[i] == '[' && squareBracketAt == -1) {
+			squareBracketAt = i;
+		}
+		if (script[i] == ']' && squareBracketAt != -1) {
+			squareBracketBlocks.push_back(TextBlock(squareBracketAt, i));
+			squareBracketAt = -1;
+		}
+	}
 	
 	//Add hotkeys
 	// Hotkeys are formatted [Key Code 1] + [Key Code 2] + [Key Code 3] + ...
 	// Where keycodes are case-insensitive https://github.com/IStrikeboomI/Hotkeyed/blob/master/HotKeyedLIB/src/keyboard/DeviceKeys.cpp
 	// Ex: Ctrl + a + 2
-	// Hotkeys are always before bracket either on same line or line above
+	// Hotkeys are always in square brackets and before bracket either on same line or line below;
 	// All below are valid:
 	/*
 		[Hotkey] {
@@ -58,10 +68,10 @@ Script::Script(const std::string& filename) : filename(filename) {
 
 			}
 	*/
-	int prevBlockEnd = -1;
-	for (TextBlock codeblock : codeblocks) {
-		TextBlock hotkeyBlock = TextBlock(prevBlockEnd + 1, codeblock.start - 1);
+	for (TextBlock squareBracketBlock : squareBracketBlocks) {
+		TextBlock hotkeyBlock = TextBlock(squareBracketBlock.start + 1, squareBracketBlock.end - 1);
 		hotkeyBlocks.push_back(hotkeyBlock);
+
 		std::string hotkey = script.substr(hotkeyBlock.start, hotkeyBlock.end - hotkeyBlock.start);
 		//remove spaces and new lines
 		hotkey = Util::replaceAll(hotkey,"\n","");
@@ -130,13 +140,24 @@ Script::Script(const std::string& filename) : filename(filename) {
 			}
 		}
 		hotkeys.push_back(keys);
-		prevBlockEnd = codeblock.end;
 	}
+
+	//Add functions
+	std::string functionScriptCopy = script;
+	while (functionScriptCopy.find_first_of("function") > 0) {
+		int functionLocation = functionScriptCopy.find_first_of("function");
+		int nextParentheses = functionScriptCopy.find_first_of("(");
+		int nextBracket = functionScriptCopy.find_first_of("{");
+
+	}
+
 	//Prints out script with colored portions for points of interest
 	//Code blocks are in green
 	//Hotkeys are in red
+	//Global Lines are in blue
+	//Functions are in purple
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	for (int i = 0; i < script.size();i++) {
+	for (int i = 0; i < script.size(); i++) {
 		SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
 		for (TextBlock c : codeblocks) {
 			if (i >= c.start && i <= c.end) {
@@ -153,6 +174,11 @@ Script::Script(const std::string& filename) : filename(filename) {
 				SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE);
 			}
 		}
+		for (TextBlock c : functionBlocks) {
+			if (i >= c.start && i <= c.end) {
+				SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | BACKGROUND_RED);
+			}
+		}
 		std::cout << script[i];
 	}
 	std::cout << "\n\n";
@@ -162,5 +188,4 @@ Script::Script(const std::string& filename) : filename(filename) {
 		}
 	}
 	std::cout << "\n";
-
 }
