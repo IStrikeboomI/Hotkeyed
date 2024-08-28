@@ -24,8 +24,8 @@ private:
 	std::vector<TextBlock> functionBlocks;
 	std::vector<TextBlock> globalLines;
 	std::string script;
+	bool isIndexInGlobal(int index);
 public:
-	static constexpr std::vector<std::string> ineligibleStartingCharacters = {""};
 
 	std::vector<Hotkey> hotkeys;
 	Script(const std::string& filename);

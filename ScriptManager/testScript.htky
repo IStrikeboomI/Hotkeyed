@@ -11,6 +11,9 @@ function testFunction() {
 	MoveMouse(800,900);
 }
 
+function parameterTest(num1, num2) {
+
+}
 [s + b + + + [] {
 	Print("test {} ta {} {{}}");
 }
@@ -21,7 +24,7 @@ function testFunction() {
 {
 
 }
-Print("Global Block test")
+Print("Global Block test");
 [k + a (1-10)
  + CTRL (up, !2-3)]
 

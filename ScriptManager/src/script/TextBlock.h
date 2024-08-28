@@ -11,6 +11,12 @@ struct TextBlock {
 		out << "[start = " << c.start << ", end = " << c.end << "]";
 		return out;
 	}
+	bool withinExclusive(int num) {
+		return num > start && num < end;
+	}
+	bool withinInclusive(int num) {
+		return num >= start && num <= end;
+	}
 	bool operator<(const TextBlock& c) const {
 		return start < c.start;
 	}

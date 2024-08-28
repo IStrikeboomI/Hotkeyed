@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\script\ScriptFunction.cpp" />
     <ClCompile Include="src\hotkey\action\Print.cpp" />
     <ClCompile Include="src\engine\ScriptEngine.cpp" />
     <ClCompile Include="src\script\Script.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="src\ScriptManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\script\ScriptFunction.h" />
     <ClInclude Include="src\hotkey\action\Print.h" />
     <ClInclude Include="src\engine\ScriptEngine.h" />
     <ClInclude Include="src\script\TextBlock.h" />

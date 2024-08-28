@@ -1,5 +1,29 @@
 #include "Script.h"
 
+bool Script::isIndexInGlobal(int index) {
+	for (TextBlock b : codeblocks) {
+		if (b.withinInclusive(index)) {
+			return false;
+		}
+	}
+	for (TextBlock b : functionBlocks) {
+		if (b.withinInclusive(index)) {
+			return false;
+		}
+	}
+	for (TextBlock b : hotkeyBlocks) {
+		if (b.withinInclusive(index)) {
+			return false;
+		}
+	}
+	for (TextBlock b : squareBracketBlocks) {
+		if (b.withinInclusive(index)) {
+			return false;
+		}
+	}
+	return true;
+}
+
 Script::Script(const std::string& filename) : filename(filename) {
 	std::ifstream file(filename);
 	std::string line;
@@ -142,15 +166,61 @@ Script::Script(const std::string& filename) : filename(filename) {
 		hotkeys.push_back(keys);
 	}
 
+	//Characters that can't be the starting character(s) for a function, variable, or parameter
+	static const std::set<std::string> ineligibleStartingCharacters = {
+		"[",
+		"]",
+		"1",
+		"2",
+		"3",
+		"4",
+		"5",
+		"6",
+		"7",
+		"8",
+		"9",
+		"0",
+		"+"
+	};
+	
 	//Add functions
 	std::string functionScriptCopy = script;
-	while (functionScriptCopy.find_first_of("function") > 0) {
-		int functionLocation = functionScriptCopy.find_first_of("function");
-		int nextParentheses = functionScriptCopy.find_first_of("(");
-		int nextBracket = functionScriptCopy.find_first_of("{");
-
+	int functionScriptCopyAt = 0;
+	while (functionScriptCopy.find("function") != std::string::npos) {
+		int functionLocation = functionScriptCopy.find("function");
+		functionScriptCopy = functionScriptCopy.substr(functionLocation);
+		functionScriptCopyAt += functionLocation;
+		int nextParentheses = functionScriptCopy.find("(");
+		int nextBracket = functionScriptCopy.find("{");
+		int nextClosingBracket = functionScriptCopy.find("}");
+		if (functionLocation < nextParentheses && functionLocation < nextBracket) {
+			if (nextBracket > nextParentheses) {
+				functionBlocks.push_back(TextBlock(functionScriptCopyAt + functionLocation, functionScriptCopyAt + nextBracket));
+				functionScriptCopy = functionScriptCopy.substr(nextClosingBracket);
+				functionScriptCopyAt += nextClosingBracket;
+			}
+		}
+	}
+	//Add global statements
+	for (int i = 0; i < script.length();i++) {
+		//skip over all the blocks, then we are working with only global lines
+		if (isIndexInGlobal(i)) {
+			std::cout << i << "\n";
+			int nextSemiColon = script.find(";", i+1);
+			if (nextSemiColon != std::string::npos && isIndexInGlobal(nextSemiColon)) {
+				globalLines.push_back(TextBlock(i, nextSemiColon));
+				i = nextSemiColon + 1;
+			} else {
+				//TODO throw error
+			}
+		}
 	}
 
+	std::cout << "\n";
+	std::cout << "------------------------------------" << "\n";
+	std::cout << "             Marked Script          " << "\n";
+	std::cout << "------------------------------------" << "\n";
+	std::cout << "\n";
 	//Prints out script with colored portions for points of interest
 	//Code blocks are in green
 	//Hotkeys are in red
@@ -160,22 +230,22 @@ Script::Script(const std::string& filename) : filename(filename) {
 	for (int i = 0; i < script.size(); i++) {
 		SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
 		for (TextBlock c : codeblocks) {
-			if (i >= c.start && i <= c.end) {
+			if (c.withinInclusive(i)) {
 				SetConsoleTextAttribute(hConsole, BACKGROUND_GREEN);
 			}
 		}
 		for (TextBlock c : hotkeyBlocks) {
-			if (i >= c.start && i <= c.end) {
+			if (c.withinInclusive(i)) {
 				SetConsoleTextAttribute(hConsole, BACKGROUND_RED);
 			}
 		}
 		for (TextBlock c : globalLines) {
-			if (i >= c.start && i <= c.end) {
+			if (c.withinInclusive(i)) {
 				SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE);
 			}
 		}
 		for (TextBlock c : functionBlocks) {
-			if (i >= c.start && i <= c.end) {
+			if (c.withinInclusive(i)) {
 				SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | BACKGROUND_RED);
 			}
 		}
