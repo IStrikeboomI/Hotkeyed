@@ -18,6 +18,7 @@ function parameterTest(num1, num2) {
 	Print("test {} ta {} {{}}");
 }
 
+
 [k + 2 (Down, 1, 2) + 4]
 
 
@@ -32,7 +33,7 @@ Print("Global Block test");
 {
 
 }
-
 [s + a + 0] {
 	Print("real");
 }
+Print("Other Global Block test");

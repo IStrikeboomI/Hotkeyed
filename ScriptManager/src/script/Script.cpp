@@ -204,14 +204,16 @@ Script::Script(const std::string& filename) : filename(filename) {
 	//Add global statements
 	for (int i = 0; i < script.length();i++) {
 		//skip over all the blocks, then we are working with only global lines
-		if (isIndexInGlobal(i)) {
-			std::cout << i << "\n";
-			int nextSemiColon = script.find(";", i+1);
-			if (nextSemiColon != std::string::npos && isIndexInGlobal(nextSemiColon)) {
-				globalLines.push_back(TextBlock(i, nextSemiColon));
-				i = nextSemiColon + 1;
-			} else {
-				//TODO throw error
+		if (script[i] != ' ' && script[i] != '\n' && script[i] != '\0') {
+			if (isIndexInGlobal(i)) {
+				std::cout << i << "\n";
+				int nextSemiColon = script.find(";", i + 1);
+				if (nextSemiColon != std::string::npos && isIndexInGlobal(nextSemiColon)) {
+					globalLines.push_back(TextBlock(i, nextSemiColon));
+					i = nextSemiColon + 1;
+				} else {
+					//TODO throw error
+				}
 			}
 		}
 	}
@@ -227,31 +229,54 @@ Script::Script(const std::string& filename) : filename(filename) {
 	//Global Lines are in blue
 	//Functions are in purple
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	std::set<int> overlaps;
 	for (int i = 0; i < script.size(); i++) {
+		bool overlap = false;
 		SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
 		for (TextBlock c : codeblocks) {
 			if (c.withinInclusive(i)) {
 				SetConsoleTextAttribute(hConsole, BACKGROUND_GREEN);
+				if (overlap) {
+					overlaps.insert(i);
+				}
+				overlap = true;
 			}
 		}
 		for (TextBlock c : hotkeyBlocks) {
 			if (c.withinInclusive(i)) {
 				SetConsoleTextAttribute(hConsole, BACKGROUND_RED);
-			}
-		}
-		for (TextBlock c : globalLines) {
-			if (c.withinInclusive(i)) {
-				SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE);
+				if (overlap) {
+					overlaps.insert(i);
+				}
+				overlap = true;
 			}
 		}
 		for (TextBlock c : functionBlocks) {
 			if (c.withinInclusive(i)) {
 				SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | BACKGROUND_RED);
+				if (overlap) {
+					overlaps.insert(i);
+				}
+				overlap = true;
+			}
+		}
+		for (TextBlock c : globalLines) {
+			if (c.withinInclusive(i)) {
+				SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE);
+				if (overlap) {
+					overlaps.insert(i);
+				}
+				overlap = true;
 			}
 		}
 		std::cout << script[i];
 	}
 	std::cout << "\n\n";
+	std::cout << "Overlaps: ";
+	for (int i : overlaps) {
+		std::cout << i << " ";
+	}
+	std::cout << "\n";
 	for (Hotkey h : hotkeys) {
 		for (Key k : h.keys) {
 			std::cout << k.deviceIDs.size() << " ";
