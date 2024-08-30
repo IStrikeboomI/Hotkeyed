@@ -12,6 +12,7 @@
 #include "../hotkey/action/Action.h"
 #include "TextBlock.h"
 #include <Util.h>
+#include <utility>
 
 //Characters/Strings that cannot be the start of functions and variables
 
@@ -25,6 +26,7 @@ private:
 	std::vector<TextBlock> globalLines;
 	std::string script;
 	bool isIndexInGlobal(int index);
+	std::pair<int,int> getLineAndCharacterFromIndex(int index);
 public:
 
 	std::vector<Hotkey> hotkeys;

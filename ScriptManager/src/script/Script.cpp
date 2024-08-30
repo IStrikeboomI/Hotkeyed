@@ -24,6 +24,22 @@ bool Script::isIndexInGlobal(int index) {
 	return true;
 }
 
+std::pair<int, int> Script::getLineAndCharacterFromIndex(int index) {
+	if (index <= script.size() - 1) {
+		int lines = 1;
+		int charAt = 1;
+		for (int i = 0; i < index;i++) {
+			charAt++;
+			if (script[i] == '\n') {
+				lines++;
+				charAt = 1;
+			}
+		}
+		return std::pair<int, int>(lines,charAt);
+	}
+	return std::pair<int, int>();
+}
+
 Script::Script(const std::string& filename) : filename(filename) {
 	std::ifstream file(filename);
 	std::string line;
@@ -195,7 +211,7 @@ Script::Script(const std::string& filename) : filename(filename) {
 		int nextClosingBracket = functionScriptCopy.find("}");
 		if (functionLocation < nextParentheses && functionLocation < nextBracket) {
 			if (nextBracket > nextParentheses) {
-				functionBlocks.push_back(TextBlock(functionScriptCopyAt + functionLocation, functionScriptCopyAt + nextBracket));
+				functionBlocks.push_back(TextBlock(functionScriptCopyAt + functionLocation, functionScriptCopyAt + nextBracket - 1));
 				functionScriptCopy = functionScriptCopy.substr(nextClosingBracket);
 				functionScriptCopyAt += nextClosingBracket;
 			}
@@ -274,7 +290,8 @@ Script::Script(const std::string& filename) : filename(filename) {
 	std::cout << "\n\n";
 	std::cout << "Overlaps: ";
 	for (int i : overlaps) {
-		std::cout << i << " ";
+		std::pair<int, int> at = getLineAndCharacterFromIndex(i);
+		std::cout << "(" << i << ", (" << at.first << ", " << at.second << "), " << script[i] << ") ";
 	}
 	std::cout << "\n";
 	for (Hotkey h : hotkeys) {
