@@ -1,9 +1,9 @@
 #pragma once
 #include <Windows.h>
 #include "Action.h"
-class MoveMouse : public Action {
+class ActionMoveMouse : public Action {
 public:
-	MoveMouse();
+	ActionMoveMouse();
 	std::any execute(std::map<Parameter, std::any>& params) override;
 };
 

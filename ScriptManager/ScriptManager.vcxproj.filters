@@ -24,13 +24,10 @@
     <ClCompile Include="src\hotkey\action\ActionManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\hotkey\action\MoveMouse.cpp">
+    <ClCompile Include="src\hotkey\action\ActionMoveMouse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\hotkey\Hotkey.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hotkey\HotkeyManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\script\Script.cpp">
@@ -39,10 +36,13 @@
     <ClCompile Include="src\engine\ScriptEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\hotkey\action\Print.cpp">
+    <ClCompile Include="src\hotkey\action\ActionPrint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\script\ScriptFunction.cpp">
+    <ClCompile Include="src\hotkey\ScriptFunction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hotkey\action\CallableAction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,16 +53,13 @@
     <ClInclude Include="src\hotkey\action\ActionManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\hotkey\action\MoveMouse.h">
+    <ClInclude Include="src\hotkey\action\ActionMoveMouse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\hotkey\action\Parameter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\hotkey\Hotkey.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\hotkey\HotkeyManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\script\Script.h">
@@ -74,10 +71,10 @@
     <ClInclude Include="src\engine\ScriptEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\hotkey\action\Print.h">
+    <ClInclude Include="src\hotkey\action\ActionPrint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\script\ScriptFunction.h">
+    <ClInclude Include="src\hotkey\ScriptFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

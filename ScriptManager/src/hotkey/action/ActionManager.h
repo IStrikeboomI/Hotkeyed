@@ -2,6 +2,9 @@
 #include <vector>
 #include <memory>
 #include "Action.h"
+
+#include "ActionPrint.h"
+#include "ActionMoveMouse.h"
 class ActionManager {
 private:
 	std::vector<std::shared_ptr<Action>> actions;

@@ -132,29 +132,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\script\ScriptFunction.cpp" />
-    <ClCompile Include="src\hotkey\action\Print.cpp" />
+    <ClCompile Include="src\hotkey\action\CallableAction.cpp" />
+    <ClCompile Include="src\hotkey\ScriptFunction.cpp" />
+    <ClCompile Include="src\hotkey\action\ActionPrint.cpp" />
     <ClCompile Include="src\engine\ScriptEngine.cpp" />
     <ClCompile Include="src\script\Script.cpp" />
     <ClCompile Include="src\hotkey\action\Action.cpp" />
     <ClCompile Include="src\hotkey\action\ActionManager.cpp" />
-    <ClCompile Include="src\hotkey\action\MoveMouse.cpp" />
+    <ClCompile Include="src\hotkey\action\ActionMoveMouse.cpp" />
     <ClCompile Include="src\hotkey\Hotkey.cpp" />
-    <ClCompile Include="src\hotkey\HotkeyManager.cpp" />
     <ClCompile Include="src\ScriptManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\script\ScriptFunction.h" />
-    <ClInclude Include="src\hotkey\action\Print.h" />
+    <ClInclude Include="src\hotkey\ScriptFunction.h" />
+    <ClInclude Include="src\hotkey\action\ActionPrint.h" />
     <ClInclude Include="src\engine\ScriptEngine.h" />
     <ClInclude Include="src\script\TextBlock.h" />
     <ClInclude Include="src\script\Script.h" />
     <ClInclude Include="src\hotkey\action\Action.h" />
     <ClInclude Include="src\hotkey\action\ActionManager.h" />
-    <ClInclude Include="src\hotkey\action\MoveMouse.h" />
+    <ClInclude Include="src\hotkey\action\ActionMoveMouse.h" />
     <ClInclude Include="src\hotkey\action\Parameter.h" />
     <ClInclude Include="src\hotkey\Hotkey.h" />
-    <ClInclude Include="src\hotkey\HotkeyManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitattributes" />

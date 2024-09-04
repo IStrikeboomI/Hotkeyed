@@ -1,9 +1,5 @@
 #include "Hotkey.h"
 
-Hotkey::Hotkey(std::vector<Key>& keys) : keys(keys) {
+Hotkey::Hotkey(std::vector<Key>& keys) : ScriptFunction("", {}), keys(keys) {
 	
-}
-
-void Hotkey::addAction(const Action& action) {
-	//actions.push_back(std::make_shared<Action>(action));
 }

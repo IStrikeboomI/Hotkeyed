@@ -3,13 +3,15 @@
 #include <any>
 #include <string>
 #include "../hotkey/action/Parameter.h"
+
+//Function used inside the script
 class ScriptFunction {
 private:
 	std::string name;
 	//parameter type is ALWAYS any, description is empty, optional is false
 	std::vector<Parameter> parameters;
 public:
-	ScriptFunction(std::string& name, std::vector<Parameter> parameters);
+	ScriptFunction(const std::string& name, const std::vector<Parameter> parameters);
 	//runs function and returns value
 	std::any execute();
 
