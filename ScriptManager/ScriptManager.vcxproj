@@ -133,6 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\hotkey\action\CallableAction.cpp" />
+    <ClCompile Include="src\hotkey\action\CallableAction.h" />
     <ClCompile Include="src\hotkey\ScriptFunction.cpp" />
     <ClCompile Include="src\hotkey\action\ActionPrint.cpp" />
     <ClCompile Include="src\engine\ScriptEngine.cpp" />

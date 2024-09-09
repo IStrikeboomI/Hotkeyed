@@ -12,5 +12,8 @@ int main() {
     Script testScript("testScript.htky");
     engine.addScript(testScript);
     //engine.start();
+    //ask for the grades using a while loop and store grade in a double called grade
+    //then do grades.push_back(grade); or whatever the grades vector is called
     return 0;
+
 }

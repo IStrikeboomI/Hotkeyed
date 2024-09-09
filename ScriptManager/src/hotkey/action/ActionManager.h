@@ -6,11 +6,12 @@
 #include "ActionPrint.h"
 #include "ActionMoveMouse.h"
 class ActionManager {
-private:
-	std::vector<std::shared_ptr<Action>> actions;
+private:	
 	//private constructor because singleton
 	ActionManager();
 public:
+	std::vector<std::shared_ptr<Action>> actions;
+
 	static ActionManager& getInstance();
 
 	//don't implement these two or else we might get multiple copies

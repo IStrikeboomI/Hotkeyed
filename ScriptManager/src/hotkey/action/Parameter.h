@@ -11,6 +11,9 @@ public:
 			  const std::string&& name,
 			  const std::string&& description = "",
 			  const bool optional = false) : type(type), name(name), description(description), optional(optional) {};
+	bool operator<(const Parameter& p) const {
+		return type < p.type;
+	}
 };
 namespace ParameterType {
 	const std::string ANY = "any";
