@@ -4,6 +4,8 @@
 #include <thread>
 #include <windows/Interceptor.h>
 #include <functional>
+//Stores current scripts and executes them
+//also listens to keyboard and mosue input to dispatch hotkeys
 class ScriptEngine {
 private:
 	Interceptor interceptor;
