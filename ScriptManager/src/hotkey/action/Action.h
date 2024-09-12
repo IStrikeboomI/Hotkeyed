@@ -5,7 +5,7 @@
 #include <any>
 #include "Parameter.h"
 
-//Represents something to do inside a hotkey (ex. Make file, move mouse, click, etc.)
+//Represents something to do inside a hotkey or function (ex. Make file, move mouse, click, etc.)
 class Action {
 public:
 	const std::string name;

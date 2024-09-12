@@ -15,7 +15,7 @@ function parameterTest(num1, num2) {
 
 }
 [s + b + + + [] {
-	Print("test {} ta {} {{}}");
+	Print("test {} ta \" {} {{}}");
 }
 
 

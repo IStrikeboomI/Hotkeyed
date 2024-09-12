@@ -1,6 +1,6 @@
 #include "Script.h"
 
-bool Script::isIndexInGlobal(int index) {
+bool Script::isIndexInGlobal(int index) const {
 	for (TextBlock b : codeblocks) {
 		if (b.withinInclusive(index)) {
 			return false;
@@ -24,7 +24,16 @@ bool Script::isIndexInGlobal(int index) {
 	return true;
 }
 
-std::pair<int, int> Script::getLineAndCharacterFromIndex(int index) {
+bool Script::isIndexInQuotations(int index) const {
+	for (TextBlock q : quotationBlocks) {
+		if (q.withinInclusive(index)) {
+			return true;
+		}
+	}
+	return true;
+}
+
+std::pair<int, int> Script::getLineAndCharacterFromIndex(int index) const {
 	if (index <= script.size() - 1) {
 		int lines = 1;
 		int charAt = 1;
@@ -38,6 +47,11 @@ std::pair<int, int> Script::getLineAndCharacterFromIndex(int index) {
 		return std::pair<int, int>(lines,charAt);
 	}
 	return std::pair<int, int>();
+}
+
+bool Script::doesTextBlockContain(const TextBlock& tb, const std::string& string) const {
+	std::string substr = script.substr(tb.start, tb.end - tb.start + 1);
+	return substr.find(string) != std::string::npos;
 }
 
 Script::Script(const std::string& filename) : filename(filename) {
@@ -76,7 +90,24 @@ Script::Script(const std::string& filename) : filename(filename) {
 			squareBracketAt = -1;
 		}
 	}
-	
+
+	//Add quotations/strings blocks
+	//ignore \" becuase that is a raw quotation not designating a string
+	int quotationIndex = -1;
+	for (int i = 1; i < script.size(); i++) {
+		if (script[i] == '"' && script[i - 1] != '\\') {
+			if (quotationIndex == -1) {
+				quotationIndex = i;
+			} else {
+				quotationBlocks.push_back(TextBlock(quotationIndex, i));
+				quotationIndex = -1;
+			}
+		}
+	}
+	//If quotation index isn't -1 that means theres an extra quotation mark somewhere
+	if (quotationIndex != -1) {
+		//TODO: add error for extra quotation somewhere
+	}
 	//Add hotkeys
 	// Hotkeys are formatted [Key Code 1] + [Key Code 2] + [Key Code 3] + ...
 	// Where keycodes are case-insensitive https://github.com/IStrikeboomI/Hotkeyed/blob/master/HotKeyedLIB/src/keyboard/DeviceKeys.cpp
@@ -233,7 +264,9 @@ Script::Script(const std::string& filename) : filename(filename) {
 			}
 		}
 	}
-
+	for (TextBlock gl : globalLines) {
+		
+	}
 	std::cout << "\n";
 	std::cout << "------------------------------------" << "\n";
 	std::cout << "             Marked Script          " << "\n";
@@ -244,6 +277,7 @@ Script::Script(const std::string& filename) : filename(filename) {
 	//Hotkeys are in red
 	//Global Lines are in blue
 	//Functions are in purple
+	//Quotations are Gray
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	std::set<int> overlaps;
 	for (int i = 0; i < script.size(); i++) {
@@ -283,6 +317,11 @@ Script::Script(const std::string& filename) : filename(filename) {
 					overlaps.insert(i);
 				}
 				overlap = true;
+			}
+		}
+		for (TextBlock c : quotationBlocks) {
+			if (c.withinInclusive(i)) {
+				SetConsoleTextAttribute(hConsole, BACKGROUND_INTENSITY);
 			}
 		}
 		std::cout << script[i];

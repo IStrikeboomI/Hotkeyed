@@ -35,6 +35,9 @@ void ScriptEngine::start() {
 		interceptor.begin();
 	});
 	interceptorThread.join();
+	for (Script s : scripts) {
+		
+	}
 }
 
 void ScriptEngine::addScript(Script& script) {
