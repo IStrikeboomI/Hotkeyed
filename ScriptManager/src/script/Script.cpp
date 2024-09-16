@@ -264,12 +264,10 @@ Script::Script(const std::string& filename) : filename(filename) {
 			}
 		}
 	}
-	for (TextBlock gl : globalLines) {
-		
-	}
+	
 	std::cout << "\n";
 	std::cout << "------------------------------------" << "\n";
-	std::cout << "             Marked Script          " << "\n";
+	std::cout << "             Marked Script: " << filename << "\n";
 	std::cout << "------------------------------------" << "\n";
 	std::cout << "\n";
 	//Prints out script with colored portions for points of interest
@@ -326,17 +324,14 @@ Script::Script(const std::string& filename) : filename(filename) {
 		}
 		std::cout << script[i];
 	}
-	std::cout << "\n\n";
+	std::cout << "------------------------------------" << "\n";
+	std::cout << "                End                 " << "\n";
+	std::cout << "------------------------------------" << "\n";
+	std::cout << "\n";
 	std::cout << "Overlaps: ";
 	for (int i : overlaps) {
 		std::pair<int, int> at = getLineAndCharacterFromIndex(i);
 		std::cout << "(" << i << ", (" << at.first << ", " << at.second << "), " << script[i] << ") ";
-	}
-	std::cout << "\n";
-	for (Hotkey h : hotkeys) {
-		for (Key k : h.keys) {
-			std::cout << k.deviceIDs.size() << " ";
-		}
 	}
 	std::cout << "\n";
 }
