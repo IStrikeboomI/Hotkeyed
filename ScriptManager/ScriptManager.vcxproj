@@ -132,6 +132,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\hotkey\action\ActionRand.cpp" />
+    <ClCompile Include="src\hotkey\action\ActionRand.h" />
     <ClCompile Include="src\hotkey\action\CallableAction.cpp" />
     <ClCompile Include="src\hotkey\action\CallableAction.h" />
     <ClCompile Include="src\hotkey\ScriptFunction.cpp" />
@@ -162,6 +164,9 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\Hotkeyed.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

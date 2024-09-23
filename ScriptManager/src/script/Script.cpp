@@ -49,6 +49,14 @@ std::pair<int, int> Script::getLineAndCharacterFromIndex(int index) const {
 	return std::pair<int, int>();
 }
 
+int Script::getIndexOfText(const std::string& string, int offset) {
+	return script.find(string,offset);
+}
+
+std::string Script::getTextFromTextBlock(const TextBlock& tb) {
+	return script.substr(tb.start, tb.end - tb.start);
+}
+
 bool Script::doesTextBlockContain(const TextBlock& tb, const std::string& string) const {
 	std::string substr = script.substr(tb.start, tb.end - tb.start + 1);
 	return substr.find(string) != std::string::npos;
@@ -253,7 +261,6 @@ Script::Script(const std::string& filename) : filename(filename) {
 		//skip over all the blocks, then we are working with only global lines
 		if (script[i] != ' ' && script[i] != '\n' && script[i] != '\0') {
 			if (isIndexInGlobal(i)) {
-				std::cout << i << "\n";
 				int nextSemiColon = script.find(";", i + 1);
 				if (nextSemiColon != std::string::npos && isIndexInGlobal(nextSemiColon)) {
 					globalLines.push_back(TextBlock(i, nextSemiColon));
@@ -264,7 +271,30 @@ Script::Script(const std::string& filename) : filename(filename) {
 			}
 		}
 	}
-	
+	//Add the global callable actions
+	for (TextBlock tb : globalLines) {
+		//if textblock has an "=" that is not in quotations then its a global line variable
+		int equalSignIndex = getIndexOfText("=", tb.start);
+		if (doesTextBlockContain(tb,"=") && !isIndexInQuotations(equalSignIndex)) {
+			//it's a variable
+			//std::cout << getTextFromTextBlock(tb) << "\n";
+		} else {
+			//it's a callable action
+			std::cout << getTextFromTextBlock(tb) << "\n";
+			bool actionFound = false;
+			//All callable actions have a action name than an opening parentheses, parameters separated by a comma, then closing parentheses
+			for (std::shared_ptr<Action> a : ActionManager::getInstance().actions) {
+				//find action being used
+				if (doesTextBlockContain(tb,a->name)) {
+					actionFound = true;
+					
+				}
+			}
+			if (!actionFound) {
+				//TODO throw error if action not found
+			}
+		}
+	}
 	std::cout << "\n";
 	std::cout << "------------------------------------" << "\n";
 	std::cout << "             Marked Script: " << filename << "\n";
