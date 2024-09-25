@@ -4,3 +4,5 @@ Add variables in Script | Script execution/reading | 10 | 9/23/2024 |
 Add global callable Actions in Script | Script execution/reading | 10 | 9/23/2024
 Throw error if action doesn't exist | Script reading/Error | 4 | 9/23/2024
 Add default values in optional parameters | Script reading | 5 | 9/23/2024
+Process other functions as parameters (nested functions) | Script Reading | 8 | 9/25/2024
+Add global number parameter type | Script execution | 3 | 9/25/2024

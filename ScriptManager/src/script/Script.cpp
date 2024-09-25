@@ -287,7 +287,14 @@ Script::Script(const std::string& filename) : filename(filename) {
 				//find action being used
 				if (doesTextBlockContain(tb,a->name)) {
 					actionFound = true;
-					
+					std::string text = getTextFromTextBlock(tb);
+					int firstParentheses = text.find("(");
+					//make sure parentheses exists after the action name
+					if (firstParentheses != std::string::npos) {
+						
+					} else {
+						//TODO throw error if action doesn't have opening parentheses
+					}
 				}
 			}
 			if (!actionFound) {

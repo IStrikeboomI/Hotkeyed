@@ -19,5 +19,5 @@ namespace ParameterType {
 	const std::string ANY = "any";
 	const std::string INT = "int";
 	const std::string STRING = "string";
-	const std::string VOID = "void";
+	const std::string VOID_S = "void";
 };
