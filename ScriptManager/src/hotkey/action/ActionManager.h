@@ -5,6 +5,7 @@
 
 #include "ActionPrint.h"
 #include "ActionMoveMouse.h"
+#include "ActionRand.h"
 class ActionManager {
 private:	
 	//private constructor because singleton

@@ -7,7 +7,7 @@ public:
 	std::string description;
 	bool optional = false;
 
-	Parameter(const std::string& type,
+	Parameter(const std::string_view& type,
 			  const std::string&& name,
 			  const std::string&& description = "",
 			  const bool optional = false) : type(type), name(name), description(description), optional(optional) {};
@@ -16,8 +16,8 @@ public:
 	}
 };
 namespace ParameterType {
-	const std::string ANY = "any";
-	const std::string INT = "int";
-	const std::string STRING = "string";
-	const std::string VOID_S = "void";
+	constexpr std::string_view ANY = "any";
+	constexpr std::string_view INT = "int";
+	constexpr std::string_view STRING = "string";
+	constexpr std::string_view VOID_S = "void";
 };

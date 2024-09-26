@@ -280,7 +280,6 @@ Script::Script(const std::string& filename) : filename(filename) {
 			//std::cout << getTextFromTextBlock(tb) << "\n";
 		} else {
 			//it's a callable action
-			std::cout << getTextFromTextBlock(tb) << "\n";
 			bool actionFound = false;
 			//All callable actions have a action name than an opening parentheses, parameters separated by a comma, then closing parentheses
 			for (std::shared_ptr<Action> a : ActionManager::getInstance().actions) {
@@ -291,7 +290,17 @@ Script::Script(const std::string& filename) : filename(filename) {
 					int firstParentheses = text.find("(");
 					//make sure parentheses exists after the action name
 					if (firstParentheses != std::string::npos) {
-						
+						int endParentheses = text.find(")");
+						//make sure closing parentheses exists
+						if (endParentheses != std::string::npos) {
+							std::string parameters = text.substr(firstParentheses + 1, endParentheses - firstParentheses);
+							std::vector<std::string> parametersList = Util::split(parameters,",");
+							//trim parameters to remove whitespace
+							//TODO add trim
+							globalActions.push_back(CallableAction(a->name, parametersList));
+						} else {
+							//TODO throw error if action doesn't have closing parentheses
+						}
 					} else {
 						//TODO throw error if action doesn't have opening parentheses
 					}
