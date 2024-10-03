@@ -279,6 +279,7 @@ Script::Script(const std::string& filename) : filename(filename) {
 			//it's a variable
 			//std::cout << getTextFromTextBlock(tb) << "\n";
 		} else {
+			
 			//it's a callable action
 			bool actionFound = false;
 			//All callable actions have a action name than an opening parentheses, parameters separated by a comma, then closing parentheses
@@ -293,10 +294,12 @@ Script::Script(const std::string& filename) : filename(filename) {
 						int endParentheses = text.find(")");
 						//make sure closing parentheses exists
 						if (endParentheses != std::string::npos) {
-							std::string parameters = text.substr(firstParentheses + 1, endParentheses - firstParentheses);
+							std::string parameters = text.substr(firstParentheses + 1, endParentheses - firstParentheses -1 );
 							std::vector<std::string> parametersList = Util::split(parameters,",");
 							//trim parameters to remove whitespace
-							//TODO add trim
+							for (std::string s : parametersList) {
+								s = Util::trim(s);
+							}
 							globalActions.push_back(CallableAction(a->name, parametersList));
 						} else {
 							//TODO throw error if action doesn't have closing parentheses

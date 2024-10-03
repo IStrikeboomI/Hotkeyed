@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
+#include <ranges>
 
 namespace Util {
 	static inline bool isNumber(const std::string& s) {
@@ -33,6 +34,21 @@ namespace Util {
             str.replace(start_pos, from.length(), to);
             start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
         }
+        return str;
+    }
+    static inline std::string trim(std::string str) {
+        auto not_space = [](unsigned char c) { return !std::isspace(c); };
+
+        // erase the the spaces at the back first
+        // so we don't have to do extra work
+        str.erase(
+            std::ranges::find_if(str | std::views::reverse, not_space).base(),
+            str.end());
+        
+        // erase the spaces at the front
+        str.erase(
+            str.begin(),
+            std::ranges::find_if(str, not_space));
         return str;
     }
 }

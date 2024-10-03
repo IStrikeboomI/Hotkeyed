@@ -1,5 +1,6 @@
-Status | Action | Topic | Priority (1 is low, 10 is high) | Date Assigned | Date Finished
+Action | Topic | Priority (1 is low, 10 is high) | Date Assigned | Date Finished
 
+Fix compiler warnings | Programming | 3 | 10/3/2024
 Add variables in Script | Script execution/reading | 10 | 9/23/2024 | 
 Add global callable Actions in Script | Script execution/reading | 10 | 9/23/2024
 Throw error if action doesn't exist | Script reading/Error | 4 | 9/23/2024

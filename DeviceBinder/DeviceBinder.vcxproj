@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\makad\Documents\Projects\C++\Hotkeyed\HotKeyedLIB\src;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\shubh\OneDrive\Documents\Projects\C++\Hotkeyed\HotKeyedLIB\src;$(IncludePath)</IncludePath>
     <LibraryPath>lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

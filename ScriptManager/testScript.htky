@@ -26,7 +26,7 @@ function parameterTest(num1, num2) {
 {
 
 }
-Print("Global Block test");
+Print(           "Global Block test"         );
 [k + a (1-10)
  + CTRL (up, !2-3)]
 
