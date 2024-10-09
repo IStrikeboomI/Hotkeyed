@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\engine\Integer.cpp" />
     <ClCompile Include="src\hotkey\action\ActionRand.cpp" />
     <ClCompile Include="src\hotkey\action\ActionRand.h" />
     <ClCompile Include="src\hotkey\action\CallableAction.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="src\ScriptManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\engine\Integer.h" />
     <ClInclude Include="src\hotkey\ScriptFunction.h" />
     <ClInclude Include="src\hotkey\action\ActionPrint.h" />
     <ClInclude Include="src\engine\ScriptEngine.h" />

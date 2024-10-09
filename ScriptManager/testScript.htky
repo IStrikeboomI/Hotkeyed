@@ -1,5 +1,6 @@
-
-//Print(Rand(10,100));
+//error here
+Print(5639352);
+Print(Rand(10,100));
 MoveMouse(100,100);
 
 MoveMouse(150,100);
