@@ -54,9 +54,6 @@
     <ClCompile Include="src\hotkey\action\ActionRand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Integer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\hotkey\action\Action.h">
@@ -89,7 +86,10 @@
     <ClInclude Include="src\hotkey\ScriptFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\engine\Integer.h">
+    <ClInclude Include="..\..\..\..\..\..\Downloads\BigInt.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\BigInt.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

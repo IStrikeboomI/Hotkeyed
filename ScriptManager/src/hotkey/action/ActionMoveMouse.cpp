@@ -6,8 +6,8 @@ ActionMoveMouse::ActionMoveMouse() : Action("MoveMouse",{Parameter(ParameterType
 }
 
 std::any ActionMoveMouse::execute(std::map<Parameter, std::any>& params) {
-	int x = std::any_cast<int>(getParam("x", params));
-	int y = std::any_cast<int>(getParam("y", params));
-	SetCursorPos(x, y);
+	BigInt x = std::any_cast<int>(getParam("x", params));
+	BigInt y = std::any_cast<int>(getParam("y", params));
+	SetCursorPos(x.to_int(), y.to_int());
 	return true;
 }

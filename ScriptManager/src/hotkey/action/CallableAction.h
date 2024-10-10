@@ -1,5 +1,6 @@
 #include "Action.h"
 #include "ActionManager.h"
+#include "../../lib/BigInt.hpp"
 #include <memory>
 #include <map>
 //Holds an action with parameters that can later be called

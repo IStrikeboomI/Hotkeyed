@@ -17,6 +17,7 @@ public:
 };
 namespace ParameterType {
 	constexpr std::string_view ANY = "any";
+	//int is the big int library in the lib folder
 	constexpr std::string_view INT = "int";
 	constexpr std::string_view STRING = "string";
 	constexpr std::string_view VOID_S = "void";
