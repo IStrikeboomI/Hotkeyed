@@ -54,6 +54,9 @@
     <ClCompile Include="src\hotkey\action\ActionRand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lib\BigFloat\BigFloat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\hotkey\action\Action.h">
@@ -86,10 +89,7 @@
     <ClInclude Include="src\hotkey\ScriptFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\Downloads\BigInt.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\BigInt.hpp">
+    <ClInclude Include="lib\BigFloat\BigFloat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

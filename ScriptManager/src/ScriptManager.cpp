@@ -3,8 +3,10 @@
 #include <windows/Interceptor.h>
 #include "script/Script.h"
 #include "engine/ScriptEngine.h"
-#include "engine/Integer.h"
 int main() {
+    BigFloat f("-3479768509280387935095304798.426879");
+    std::cout << f << "\n";
+    std::cout << f.toInt() << "\n";
     DeviceManager::getInstance().populate();
     Mapping mapping(std::filesystem::current_path().generic_string() + "/mapping.mapping");
     DeviceManager::getInstance().setMapping(mapping);

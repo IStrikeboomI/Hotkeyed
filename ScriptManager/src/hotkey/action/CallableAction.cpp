@@ -24,8 +24,8 @@ CallableAction::CallableAction(const std::string& name, const std::vector<std::s
 		if (expected.type == ParameterType::STRING) {
 			parameterValue = parameters[i];
 		}
-		if (expected.type == ParameterType::INT) {
-			parameterValue = BigInt(parameters[i]);
+		if (expected.type == ParameterType::NUM) {
+			//parameterValue = BigFloat(parameters[i]);
 		}
 		this->parameters.emplace(expected, parameterValue);
 	}

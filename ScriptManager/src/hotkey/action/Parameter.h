@@ -17,8 +17,9 @@ public:
 };
 namespace ParameterType {
 	constexpr std::string_view ANY = "any";
-	//int is the big int library in the lib folder
-	constexpr std::string_view INT = "int";
+	//num is the big float library in the lib folder
+	constexpr std::string_view NUM = "num";
 	constexpr std::string_view STRING = "string";
+	//Not VOID because thats already defined somewhere
 	constexpr std::string_view VOID_S = "void";
 };

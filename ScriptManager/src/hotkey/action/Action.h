@@ -4,7 +4,7 @@
 #include <string>
 #include <any>
 #include "Parameter.h"
-#include "../../lib/BigInt.hpp"
+#include "../../lib/BigFloat/BigFloat.h"
 
 //Represents something to do inside a hotkey or function (ex. Make file, move mouse, click, etc.)
 class Action {
