@@ -6,7 +6,7 @@
 int main() {
     BigFloat f("-3479768509280387935095304798.426879");
     std::cout << f << "\n";
-    std::cout << f.toInt() << "\n";
+    ParameterNum n("","");
     DeviceManager::getInstance().populate();
     Mapping mapping(std::filesystem::current_path().generic_string() + "/mapping.mapping");
     DeviceManager::getInstance().setMapping(mapping);

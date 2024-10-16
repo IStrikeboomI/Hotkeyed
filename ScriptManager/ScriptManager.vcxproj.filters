@@ -57,6 +57,9 @@
     <ClCompile Include="lib\BigFloat\BigFloat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\hotkey\parameter\ParameterNum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\hotkey\action\Action.h">
@@ -68,7 +71,7 @@
     <ClInclude Include="src\hotkey\action\ActionMoveMouse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\hotkey\action\Parameter.h">
+    <ClInclude Include="src\hotkey\parameter\Parameter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\hotkey\Hotkey.h">
@@ -90,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lib\BigFloat\BigFloat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hotkey\parameter\ParameterNum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

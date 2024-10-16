@@ -49,12 +49,57 @@ std::pair<int, int> Script::getLineAndCharacterFromIndex(int index) const {
 	return std::pair<int, int>();
 }
 
-int Script::getIndexOfText(const std::string& string, int offset) {
+int Script::getIndexOfText(const std::string& string, int offset) const {
 	return script.find(string,offset);
 }
 
-std::string Script::getTextFromTextBlock(const TextBlock& tb) {
+std::string Script::getTextFromTextBlock(const TextBlock& tb) const {
 	return script.substr(tb.start, tb.end - tb.start);
+}
+
+bool Script::isCallableAction(const std::string& text) const {
+	//it's a callable action
+	bool actionFound = false;
+	//All callable actions have a action name than an opening parentheses, parameters separated by a comma, then closing parentheses
+	for (std::shared_ptr<Action> a : ActionManager::getInstance().actions) {
+		//find action being used
+		if (text.find(a->name)) {
+			int firstParentheses = text.find("(");
+			//make sure parentheses exists after the action name
+			if (firstParentheses != std::string::npos) {
+				int endParentheses = text.find(")");
+				//make sure closing parentheses exists
+				if (endParentheses != std::string::npos) {
+					actionFound = true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+void Script::addCallableAction(const std::string& text) {
+	//All callable actions have a action name than an opening parentheses, parameters separated by a comma, then closing parentheses
+	for (std::shared_ptr<Action> a : ActionManager::getInstance().actions) {
+		//find action being used
+		if (text.find(a->name)) {
+			int firstParentheses = text.find("(");
+			//make sure parentheses exists after the action name
+			if (firstParentheses != std::string::npos) {
+				int endParentheses = text.find(")");
+				//make sure closing parentheses exists
+				if (endParentheses != std::string::npos) {
+					std::string parameters = text.substr(firstParentheses + 1, endParentheses - firstParentheses - 1);
+					std::vector<std::string> parametersList = Util::split(parameters, ",");
+					//trim parameters to remove whitespace
+					for (std::string s : parametersList) {
+						s = Util::trim(s);
+					}
+					globalActions.push_back(CallableAction(a->name, parametersList));
+				}
+			}
+		}
+	}
 }
 
 bool Script::doesTextBlockContain(const TextBlock& tb, const std::string& string) const {
@@ -274,43 +319,16 @@ Script::Script(const std::string& filename) : filename(filename) {
 	//Add the global callable actions
 	for (TextBlock tb : globalLines) {
 		//if textblock has an "=" that is not in quotations then its a global line variable
-		int equalSignIndex = getIndexOfText("=", tb.start);
-		if (doesTextBlockContain(tb,"=") && !isIndexInQuotations(equalSignIndex)) {
-			//it's a variable
-			//std::cout << getTextFromTextBlock(tb) << "\n";
-		} else {
-			
-			//it's a callable action
-			bool actionFound = false;
-			//All callable actions have a action name than an opening parentheses, parameters separated by a comma, then closing parentheses
-			for (std::shared_ptr<Action> a : ActionManager::getInstance().actions) {
-				//find action being used
-				if (doesTextBlockContain(tb,a->name)) {
-					actionFound = true;
-					std::string text = getTextFromTextBlock(tb);
-					int firstParentheses = text.find("(");
-					//make sure parentheses exists after the action name
-					if (firstParentheses != std::string::npos) {
-						int endParentheses = text.find(")");
-						//make sure closing parentheses exists
-						if (endParentheses != std::string::npos) {
-							std::string parameters = text.substr(firstParentheses + 1, endParentheses - firstParentheses -1 );
-							std::vector<std::string> parametersList = Util::split(parameters,",");
-							//trim parameters to remove whitespace
-							for (std::string s : parametersList) {
-								s = Util::trim(s);
-							}
-							globalActions.push_back(CallableAction(a->name, parametersList));
-						} else {
-							//TODO throw error if action doesn't have closing parentheses
-						}
-					} else {
-						//TODO throw error if action doesn't have opening parentheses
-					}
+		if (!isIndexInQuotations(tb.start) && !isIndexInQuotations(tb.end)) {
+			int equalSignIndex = getIndexOfText("=", tb.start);
+			if (doesTextBlockContain(tb, "=") && !isIndexInQuotations(equalSignIndex)) {
+				//it's a variable
+				//std::cout << getTextFromTextBlock(tb) << "\n";
+			} else {
+				std::string text = getTextFromTextBlock(tb);
+				if (isCallableAction(text)) {
+					addCallableAction(tb);
 				}
-			}
-			if (!actionFound) {
-				//TODO throw error if action not found
 			}
 		}
 	}

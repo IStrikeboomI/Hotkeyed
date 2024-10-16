@@ -31,8 +31,11 @@ private:
 	bool isIndexInQuotations(int index) const;
 	bool doesTextBlockContain(const TextBlock& tb, const std::string& string) const;
 	std::pair<int,int> getLineAndCharacterFromIndex(int index) const;
-	int getIndexOfText(const std::string& string,int offset = 0);
-	std::string getTextFromTextBlock(const TextBlock& tb);
+	int getIndexOfText(const std::string& string,int offset = 0) const;
+	std::string getTextFromTextBlock(const TextBlock& tb) const ;
+	//checks if a piece of text is a valid callable action (has an action name and parentheses pair)
+	bool isCallableAction(const std::string& text) const;
+	void addCallableAction(const std::string& text);
 public:
 	std::string filename;
 	std::vector<Hotkey> hotkeys;

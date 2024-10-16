@@ -3,21 +3,24 @@
 #include <map>
 #include <string>
 #include <any>
-#include "Parameter.h"
+#include "../parameter/Parameter.h"
+#include "../parameter/ParameterNum.h"
 #include "../../lib/BigFloat/BigFloat.h"
 
 //Represents something to do inside a hotkey or function (ex. Make file, move mouse, click, etc.)
+template <typename... P>
 class Action {
 public:
 	const std::string returnValue;
 	const std::string name;
-	const std::vector<Parameter> parameters;
+	const std::vector<std::shared_ptr<Parameter<?>>> parameters;
 
-	Action(const std::string_view& name, const std::vector<Parameter>&& possibleParameters, const std::string_view& returnValue = ParameterType::VOID_S);
-	virtual std::any execute(std::map<Parameter,std::any>& params) = 0;
+	Action(const std::string_view& name, const int& returnValue = ParameterType::VOID_E);
+	virtual std::any execute() = 0;
 
-	static std::any getParam(const std::string& name, const std::map<Parameter, std::any>& params) {
-		for (auto const& [key, val] : params) {
+	 std::any getParam(const std::string& name, const std::map<Parameter, std::any>& params) {
+		
+		 for (auto const& [key, val] : params) {
 			if (key.name == name) {
 				return val;
 			}

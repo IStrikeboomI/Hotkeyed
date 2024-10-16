@@ -81,7 +81,6 @@ BigFloat::BigFloat(const std::string& str)
 	}
 	if (s_str.front() == '-') // check if the number is negative
 	{
-		int m;
 		negativ = true;
 		s_str.erase(s_str.begin());
 		for (i = 0; i < s_str.size(); i++) // find the position of the decimal point, if any
@@ -97,11 +96,13 @@ BigFloat::BigFloat(const std::string& str)
 		{
 			s_str.erase(s_str.begin() + i); // remove the decimal point from the string
 		}
-		m = stoi(s_str); // convert the remaining string to an integer
-		while (m > 0) // extract the digits of the integer and store them in digits vector
+		for (int i = s_str.size() - 1; i >= 0; i--) // extract the digits of the integer and store them in digits vector
 		{
-			digits.push_back(m % 10);
-			m /= 10;
+			if (isdigit(s_str[i])) {
+				digits.push_back(s_str[i] - '0');
+			} else {
+				throw("The string of digits contains unaccepted characters"); // throw an exception if the string contains unaccepted characters
+			}
 		}
 	}
 	else // case when the number is positive or zero
