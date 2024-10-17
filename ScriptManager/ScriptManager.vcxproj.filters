@@ -60,6 +60,9 @@
     <ClCompile Include="src\hotkey\parameter\ParameterNum.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\hotkey\parameter\ParameterVoid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\hotkey\action\Action.h">
@@ -96,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\hotkey\parameter\ParameterNum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hotkey\parameter\ParameterVoid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

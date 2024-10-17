@@ -8,15 +8,17 @@ public:
 	bool optional = false;
 	T value = getDefaultValue();
 	
-	Parameter(const std::string_view& type,
-			  const std::string&& name,
-			  const std::string&& description = "",
-			  const bool optional = false) : name(name), description(description), optional(optional) {};
+	constexpr Parameter(
+		      constexpr std::string_view& name,
+			  constexpr std::string_view&& description = "",
+			  constexpr bool optional = false) : name(name), description(description), optional(optional) {};
 
 	virtual constexpr int getType() = 0;
 	virtual constexpr T getDefaultValue() = 0;
 };
 enum ParameterType {
+	//VOID_E stands for void enum
+	//not VOID because that's already defined by Windows.h
 	VOID_E,
 	NUM,
 	STRING

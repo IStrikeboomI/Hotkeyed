@@ -133,6 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lib\BigFloat\BigFloat.cpp" />
+    <ClCompile Include="src\hotkey\parameter\ParameterVoid.cpp" />
     <ClCompile Include="src\hotkey\parameter\ParameterNum.cpp" />
     <ClCompile Include="src\hotkey\action\ActionRand.cpp" />
     <ClCompile Include="src\hotkey\action\ActionRand.h" />
@@ -150,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\BigFloat\BigFloat.h" />
+    <ClInclude Include="src\hotkey\parameter\ParameterVoid.h" />
     <ClInclude Include="src\hotkey\parameter\ParameterNum.h" />
     <ClInclude Include="src\hotkey\ScriptFunction.h" />
     <ClInclude Include="src\hotkey\action\ActionPrint.h" />
