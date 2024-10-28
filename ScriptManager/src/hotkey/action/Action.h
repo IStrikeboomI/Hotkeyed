@@ -3,9 +3,6 @@
 #include <map>
 #include <string>
 #include <any>
-#include "../parameter/Parameter.h"
-#include "../parameter/ParameterVoid.h"
-#include "../parameter/ParameterNum.h"
 #include "../../lib/BigFloat/BigFloat.h"
 
 //Represents something to do inside a hotkey or function (ex. Make file, move mouse, click, etc.)

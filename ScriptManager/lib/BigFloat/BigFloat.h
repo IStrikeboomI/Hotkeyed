@@ -15,7 +15,7 @@ private:
 
 public:
 	//This is the default constructor, which initializes a new BigFloat object to 0.
-	BigFloat();
+	constexpr BigFloat();
 
 	//This constructor initializes a new BigFloat object from a long long integer.
 	BigFloat(long long);
