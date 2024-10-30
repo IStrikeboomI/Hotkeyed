@@ -4,10 +4,10 @@
 #include <string>
 #include <any>
 #include "../../lib/BigFloat/BigFloat.h"
-
+#include "../parameter/Parameter.h"
 //Represents something to do inside a hotkey or function (ex. Make file, move mouse, click, etc.)
 //R is the return type and P is a list of parameters
-template <Parameter R, Parameter... P>
+template <const Parameter& R,const Parameter&... P>
 class Action {
 public:
 	const std::string name;

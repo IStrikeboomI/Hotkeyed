@@ -18,10 +18,10 @@ public:
 	constexpr BigFloat();
 
 	//This constructor initializes a new BigFloat object from a long long integer.
-	BigFloat(long long);
+	constexpr BigFloat(long long);
 
 	//This constructor initializes a new BigFloat object from a string.
-	BigFloat(const std::string&);
+	constexpr BigFloat(const std::string&);
 
 	//This is the copy constructor, which initializes a new BigFloat object from an existing BigFloat object.
 	BigFloat(const BigFloat&);
