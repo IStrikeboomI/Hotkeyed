@@ -9,7 +9,7 @@ int main() {
     BigFloat f("-3479768509280387935095304798.426879");
     std::cout << f << "\n";
     std::vector<std::unique_ptr<Parameter>> dt;
-    Parameter p = Parameter::Parameter<DataTypeNumber>("test", "test", false);
+    Parameter p = Parameter::Parameter<DataTypeNumber>("test", "test", false,DataTypeNumber(""));
 
     DeviceManager::getInstance().populate();
     Mapping mapping(std::filesystem::current_path().generic_string() + "/mapping.mapping");

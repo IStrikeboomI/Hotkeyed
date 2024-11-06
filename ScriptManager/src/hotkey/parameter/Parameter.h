@@ -1,19 +1,22 @@
 #pragma once
 #include <string>
+#include <memory>
 #include "../datatype/DataType.h"
+#include "../datatype/DataTypeNumber.h"
 struct Parameter {
-public:
-	std::string name;
-	std::string description;
-	bool optional = false;
-	
-	template <typename T>
-	constexpr Parameter(
-		const std::string_view& name,
-		const std::string_view&& description = "",
+	const std::string name;
+	const std::string description;
+	const bool optional = false;
+	const DataTypes type;
+	const std::shared_ptr<DataType> defaultValue;
+
+	//this constructor should be used if parameter is not optional
+	const Parameter(
+		const std::string& name,
+		const DataTypes type,
+		const std::string& description = "",
 		const bool optional = false,
-		const T& defaultValue = T.getDefaultValue()
-		) : name(name), description(description), optional(optional) {
-		
-	};
+		const std::shared_ptr<DataType>& defaultValue = std::make_shared<DataType>(nullptr)
+		) : name(name), type(type), description(description), optional(optional),defaultValue(defaultValue) {};
+
 };

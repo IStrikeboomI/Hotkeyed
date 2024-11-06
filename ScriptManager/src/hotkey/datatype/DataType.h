@@ -1,12 +1,11 @@
 #pragma once
-//D is type T that is the default value
-template <typename T>
+#include <any>
 class DataType {	
 public:
-	T value = getDefaultValue();
-	constexpr DataType(const T& value = getDefaultValue()) : value(value) {};
-	virtual constexpr int getType() = 0;
-	virtual constexpr T getDefaultValue() = 0;
+	std::any value = getDefaultValue();
+	DataType(const std::any& value) : value(value) {};
+	virtual constexpr DataTypes getType() = 0;
+	virtual const std::any getDefaultValue() = 0;
 };
 enum DataTypes {
 	//VOID_E stands for void enum
