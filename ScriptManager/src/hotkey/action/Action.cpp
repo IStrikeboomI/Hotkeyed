@@ -31,3 +31,11 @@ bool Action::areParametersValid(const std::vector<std::shared_ptr<DataType>>& pa
 	}
 	return true;
 }
+
+void Action::fillOptionalParameters(std::vector<std::shared_ptr<DataType>>& parameters) const {
+	for (int i = this->parameters.size() - parameters.size(); i < parameters.size();i++) {
+		if (this->parameters[i].optional) {
+			parameters.push_back(std::make_shared<DataType>(this->parameters[i].defaultValue));
+		}
+	}
+}
