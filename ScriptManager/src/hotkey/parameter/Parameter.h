@@ -10,8 +10,8 @@ public:
 	
 	constexpr Parameter(
 		      constexpr std::string_view& name,
-			  constexpr std::string_view&& description = "",
-			  constexpr bool optional = false) : name(name), description(description), optional(optional) {};
+			  const std::string& description = "",
+			  const bool optional = false) : name(name), description(description), optional(optional) {};
 
 	virtual constexpr int getType() = 0;
 	virtual constexpr T getDefaultValue() = 0;
