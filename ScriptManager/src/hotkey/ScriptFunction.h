@@ -2,7 +2,7 @@
 #include <vector>
 #include <any>
 #include <string>
-#include "../hotkey/action/Parameter.h"
+#include "../hotkey/parameter/Parameter.h"
 
 //Function used inside the script
 class ScriptFunction {

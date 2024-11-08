@@ -1,25 +1,22 @@
 #pragma once
 #include <string>
-template <typename T>
+#include <memory>
+#include "../datatype/DataType.h"
+#include "../datatype/DataTypeNumber.h"
 struct Parameter {
-public:
-	std::string name;
-	std::string description;
-	bool optional = false;
-	T value = getDefaultValue();
-	
-	constexpr Parameter(
-		      constexpr std::string_view& name,
-			  const std::string& description = "",
-			  const bool optional = false) : name(name), description(description), optional(optional) {};
+	const std::string name;
+	const std::string description;
+	const bool optional = false;
+	const DataTypes type;
+	const std::shared_ptr<DataType> defaultValue;
 
-	virtual constexpr int getType() = 0;
-	virtual constexpr T getDefaultValue() = 0;
-};
-enum ParameterType {
-	//VOID_E stands for void enum
-	//not VOID because that's already defined by Windows.h
-	VOID_E,
-	NUM,
-	STRING
+	//this constructor should be used if parameter is not optional
+	const Parameter(
+		const std::string& name,
+		const DataTypes type,
+		const std::string& description = "",
+		const bool optional = false,
+		const std::shared_ptr<DataType>& defaultValue = std::make_shared<DataType>(nullptr)
+		) : name(name), type(type), description(description), optional(optional),defaultValue(defaultValue) {};
+
 };

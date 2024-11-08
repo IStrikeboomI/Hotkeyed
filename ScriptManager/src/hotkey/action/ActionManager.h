@@ -11,7 +11,7 @@ private:
 	//private constructor because singleton
 	ActionManager();
 public:
-	std::vector<std::shared_ptr<Action<>>> actions;
+	std::vector<std::shared_ptr<Action>> actions;
 
 	static ActionManager& getInstance();
 
