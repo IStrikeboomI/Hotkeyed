@@ -2,6 +2,8 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <string>
+#include <sstream>
 
 class BigFloat
 {
@@ -15,13 +17,13 @@ private:
 
 public:
 	//This is the default constructor, which initializes a new BigFloat object to 0.
-	constexpr BigFloat();
+	const BigFloat();
 
 	//This constructor initializes a new BigFloat object from a long long integer.
-	constexpr BigFloat(long long);
+	const BigFloat(long long);
 
 	//This constructor initializes a new BigFloat object from a string.
-	constexpr BigFloat(const std::string&);
+	const BigFloat(const std::string&);
 
 	//This is the copy constructor, which initializes a new BigFloat object from an existing BigFloat object.
 	BigFloat(const BigFloat&);
@@ -90,5 +92,6 @@ public:
 	friend void set_precision(BigFloat&, BigFloat&,const int&);
 
 	int toInt() const;
+	std::string toString() const;
 };
 

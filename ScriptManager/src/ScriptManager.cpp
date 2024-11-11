@@ -5,12 +5,7 @@
 #include "engine/ScriptEngine.h"
 #include "hotkey/parameter/Parameter.h"
 #include "hotkey/datatype/DataTypeNumber.h"
-int main() {
-    BigFloat f("-3479768509280387935095304798.426879");
-    std::cout << f << "\n";
-    std::vector<std::unique_ptr<Parameter>> dt;
-    Parameter p = Parameter::Parameter<DataTypeNumber>("test", "test", false,DataTypeNumber(""));
-
+int main() { 
     DeviceManager::getInstance().populate();
     Mapping mapping(std::filesystem::current_path().generic_string() + "/mapping.mapping");
     DeviceManager::getInstance().setMapping(mapping);

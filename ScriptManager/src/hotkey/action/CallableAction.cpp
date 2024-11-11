@@ -17,16 +17,16 @@ CallableAction::CallableAction(const std::string& name, const std::vector<std::s
 				//TODO throw error here because provided parameters is smaller than expected
 			}
 		}
-		std::any parameterValue;
-		if (expected.type == ParameterType::ANY || expected.type.empty()) {
-			parameterValue = parameters[i];
-		}
-		if (expected.type == ParameterType::STRING) {
-			parameterValue = parameters[i];
-		}
-		if (expected.type == ParameterType::NUM) {
-			parameterValue = BigFloat(parameters[i]);
-		}
+		std::any parameterValue = 0;
+		//if (expected.type == ParameterType::ANY || expected.type.empty()) {
+		//	parameterValue = parameters[i];
+		//}
+		//if (expected.type == ParameterType::STRING) {
+		//	parameterValue = parameters[i];
+		//}
+		//if (expected.type == ParameterType::NUM) {
+		//	parameterValue = BigFloat(parameters[i]);
+		//}
 		this->parameters.emplace(expected, parameterValue);
 	}
 }

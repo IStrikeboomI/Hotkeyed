@@ -1,7 +1,6 @@
 Action | Topic | Priority (1 is low, 10 is high) | Date Assigned | Date Finished
 
 TODO:
-Add parameter types as specific class that get inherited instead of doing a general string | Script | 10 | 10/16/2024
 Fix compiler warnings | Programming | 3 | 10/3/2024
 Add variables in Script | Script execution/reading | 10 | 9/23/2024 | 
 Add global callable Actions in Script | Script execution/reading | 10 | 9/23/2024
@@ -13,3 +12,4 @@ When checking for actions, make sure it's a literal (not in a string) | Script r
 
 Completed:
 Add general number parameter type | Script execution | 3 | 9/25/2024 | 10/16/2024
+Add parameter types as specific class that get inherited instead of doing a general string | Script | 10 | 10/16/2024 | 11/11/2024

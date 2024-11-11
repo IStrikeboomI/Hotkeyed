@@ -1,13 +1,13 @@
 #include "ActionMoveMouse.h"
 
-ActionMoveMouse::ActionMoveMouse() : Action("MoveMouse",{Parameter(ParameterType::NUM,"x"),
-											 Parameter(ParameterType::NUM,"y") }) {
+ActionMoveMouse::ActionMoveMouse() : Action("MoveMouse", DataTypes::VOID_E, {Parameter("x",DataTypes::NUM),Parameter("y",DataTypes::NUM)}, "Moves mouse cursor to (x,y)") {
 
 }
 
-std::any ActionMoveMouse::execute(std::map<Parameter, std::any>& params) {
-	BigFloat x = std::any_cast<int>(getParam("x", params));
-	BigFloat y = std::any_cast<int>(getParam("y", params));
+std::shared_ptr<DataType> ActionMoveMouse::execute(std::vector<std::shared_ptr<DataType>>& parameters) {
+	BigFloat x = parameters[0]->getValue<BigFloat>();
+	BigFloat y = parameters[1]->getValue<BigFloat>();
 	SetCursorPos(x.toInt(), y.toInt());
-	return true;
+	return std::make_shared<DataTypeVoid>(DataTypeVoid());
 }
+

@@ -3,6 +3,7 @@
 #include <memory>
 #include "../datatype/DataType.h"
 #include "../datatype/DataTypeNumber.h"
+#include "../datatype/DataTypeVoid.h"
 struct Parameter {
 	const std::string name;
 	const std::string description;

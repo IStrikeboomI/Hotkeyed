@@ -245,6 +245,12 @@ BigFloat& BigFloat::operator=(const BigFloat& ob)
 	return *this;
 }
 
+std::string BigFloat::toString() const {
+	std::stringstream ss;
+	ss << this;
+	return ss.str();
+}
+
 
 std::istream& operator>>(std::istream& in, BigFloat& ob)
 {
@@ -266,6 +272,7 @@ std::istream& operator>>(std::istream& in, BigFloat& ob)
 	// Return the input stream
 	return in;
 }
+
 
 
 ostream& operator<<(ostream& out, const BigFloat& ob)

@@ -327,7 +327,7 @@ Script::Script(const std::string& filename) : filename(filename) {
 			} else {
 				std::string text = getTextFromTextBlock(tb);
 				if (isCallableAction(text)) {
-					addCallableAction(tb);
+					addCallableAction(text);
 				}
 			}
 		}

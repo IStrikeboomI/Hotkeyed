@@ -137,6 +137,7 @@
     <ClCompile Include="src\hotkey\action\ActionRand.h" />
     <ClCompile Include="src\hotkey\action\CallableAction.cpp" />
     <ClCompile Include="src\hotkey\action\CallableAction.h" />
+    <ClCompile Include="src\hotkey\datatype\DataTypeVoid.h" />
     <ClCompile Include="src\hotkey\ScriptFunction.cpp" />
     <ClCompile Include="src\hotkey\action\ActionPrint.cpp" />
     <ClCompile Include="src\engine\ScriptEngine.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="src\hotkey\datatype\DataTypeNumber.h" />
     <ClInclude Include="lib\BigFloat\BigFloat.h" />
     <ClInclude Include="src\hotkey\datatype\DataType.h" />
+    <ClInclude Include="src\hotkey\datatype\DataTypeString.h" />
     <ClInclude Include="src\hotkey\ScriptFunction.h" />
     <ClInclude Include="src\hotkey\action\ActionPrint.h" />
     <ClInclude Include="src\engine\ScriptEngine.h" />

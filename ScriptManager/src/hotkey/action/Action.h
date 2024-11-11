@@ -19,6 +19,6 @@ public:
 	bool areParametersValid(const std::vector<std::shared_ptr<DataType>>& parameters) const;
 	//adds the default value for optional parameters that are left empty
 	void fillOptionalParameters(std::vector<std::shared_ptr<DataType>>& parameters) const;
-	virtual DataType execute() = 0;
+	virtual std::shared_ptr<DataType> execute(std::vector<std::shared_ptr<DataType>>& parameters) = 0;
 
 };

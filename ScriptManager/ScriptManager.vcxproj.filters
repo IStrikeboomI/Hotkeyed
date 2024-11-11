@@ -57,6 +57,9 @@
     <ClCompile Include="lib\BigFloat\BigFloat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\hotkey\datatype\DataTypeVoid.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\hotkey\action\Action.h">
@@ -96,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\hotkey\datatype\DataTypeNumber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hotkey\datatype\DataTypeString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

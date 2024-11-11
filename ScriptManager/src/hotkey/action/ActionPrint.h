@@ -4,6 +4,6 @@
 class ActionPrint : public Action{
 public:
 	ActionPrint();
-	std::any execute(std::map<Parameter, std::any>& params) override;
+	std::shared_ptr<DataType> execute(std::vector<std::shared_ptr<DataType>>& parameters) override;
 };
 

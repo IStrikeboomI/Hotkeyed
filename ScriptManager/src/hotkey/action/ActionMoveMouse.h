@@ -1,9 +1,9 @@
 #pragma once
 #include <Windows.h>
 #include "Action.h"
-class ActionMoveMouse : public Action<ParameterVoid(),ParameterNum("x"), ParameterNum("y")> {
+class ActionMoveMouse : public Action {
 public:
 	ActionMoveMouse();
-	ParameterVoid execute() override;
+	std::shared_ptr<DataType> execute(std::vector<std::shared_ptr<DataType>>& parameters) override;
 };
 
