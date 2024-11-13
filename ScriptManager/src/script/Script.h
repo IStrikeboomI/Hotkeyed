@@ -39,7 +39,6 @@ private:
 public:
 	std::string filename;
 	std::vector<Hotkey> hotkeys;
-	std::map<Parameter, std::any> variables;
 	std::vector<CallableAction> globalActions;
 	Script(const std::string& filename);
 };

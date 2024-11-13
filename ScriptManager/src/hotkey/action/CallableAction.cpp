@@ -1,7 +1,7 @@
 #include "CallableAction.h"
 
-CallableAction::CallableAction(const std::shared_ptr<Action>& action, const std::map<Parameter, std::any>& parameters) : action(action), parameters(parameters) {
-}
+//allableAction::CallableAction(const std::shared_ptr<Action>& action, const std::map<Parameter, std::any>& parameters) : action(action), parameters(parameters) {
+//}
 
 CallableAction::CallableAction(const std::string& name, const std::vector<std::string>& parameters) {
 	for (std::shared_ptr<Action> a : ActionManager::getInstance().actions) {
@@ -27,6 +27,6 @@ CallableAction::CallableAction(const std::string& name, const std::vector<std::s
 		//if (expected.type == ParameterType::NUM) {
 		//	parameterValue = BigFloat(parameters[i]);
 		//}
-		this->parameters.emplace(expected, parameterValue);
+		//this->parameters.emplace(expected, parameterValue);
 	}
 }

@@ -1,8 +1,8 @@
 #include "Action.h"
 
-Action::Action(const std::string_view& name, const DataTypes returnType, const std::vector<Parameter>& parameters, const std::string& description)
-	: name(name), returnType(returnType), parameters(parameters), description(description) {
-}
+//Action::Action(const std::string_view& name, const DataTypes returnType, const std::vector<Parameter>& parameters, const std::string& description)
+//	: name(name), returnType(returnType), parameters(parameters), description(description) {
+//}
 
 bool Action::areParametersValid(const std::vector<std::shared_ptr<DataType>>& parameters) const {
 	//provided too many parameters
