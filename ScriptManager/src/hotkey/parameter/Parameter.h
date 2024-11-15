@@ -4,12 +4,13 @@
 #include "../datatype/DataType.h"
 #include "../datatype/DataTypeNumber.h"
 #include "../datatype/DataTypeVoid.h"
+#include "../datatype/DataTypeString.h"
 struct Parameter {
 	const std::string name;
 	const std::string description;
 	const bool optional = false;
 	const DataTypes type;
-	std::shared_ptr<DataType> defaultValue;
+	const DataType& defaultValue;
 
 	//this constructor should be used if parameter is not optional
 	const Parameter(
@@ -17,7 +18,7 @@ struct Parameter {
 		const DataTypes type,
 		const std::string& description = "",
 		const bool optional = false,
-		const std::unique_ptr<DataType> defaultValue;
-		) : name(name), type(type), description(description), optional(optional), defaultValue() {
+		const DataType& defaultValue = DataTypeVoid()
+		) : name(name), type(type), description(description), optional(optional), defaultValue(defaultValue) {
 	};
 };

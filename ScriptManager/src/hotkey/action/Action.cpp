@@ -35,7 +35,27 @@ bool Action::areParametersValid(const std::vector<std::shared_ptr<DataType>>& pa
 void Action::fillOptionalParameters(std::vector<std::shared_ptr<DataType>>& parameters) const {
 	for (int i = this->parameters.size() - parameters.size(); i < parameters.size();i++) {
 		if (this->parameters[i].optional) {
-			parameters.push_back(std::make_shared<DataType>(this->parameters[i].defaultValue));
+			DataTypes type = this->parameters[i].type;
+			std::shared_ptr<DataType> defaultValue;
+			switch (this->parameters[i].type) {
+				case DataTypes::VOID_E: {
+					defaultValue = std::make_shared<DataTypeVoid>((this->parameters[i].defaultValue));
+					break;
+				}
+				case DataTypes::NUM: {
+					defaultValue = std::make_shared<DataTypeNumber>((this->parameters[i].defaultValue));
+					break;
+				}
+				case DataTypes::STRING: {
+					defaultValue = std::make_shared<DataTypeString>((this->parameters[i].defaultValue));
+					break;
+				}
+				default: {
+					defaultValue = std::make_shared<DataTypeVoid>((this->parameters[i].defaultValue));
+					break;
+				}	
+			}
+			parameters.push_back(defaultValue);
 		}
 	}
 }
