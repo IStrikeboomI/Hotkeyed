@@ -1,8 +1,8 @@
 #include "Action.h"
 
-//Action::Action(const std::string_view& name, const DataTypes returnType, const std::vector<Parameter>& parameters, const std::string& description)
-//	: name(name), returnType(returnType), parameters(parameters), description(description) {
-//}
+Action::Action(const std::string_view& name, const DataTypes returnType, const std::vector<Parameter>& parameters, const std::string& description)
+	: name(name), returnType(returnType), parameters(parameters), description(description) {
+}
 
 bool Action::areParametersValid(const std::vector<std::shared_ptr<DataType>>& parameters) const {
 	//provided too many parameters
@@ -39,19 +39,19 @@ void Action::fillOptionalParameters(std::vector<std::shared_ptr<DataType>>& para
 			std::shared_ptr<DataType> defaultValue;
 			switch (this->parameters[i].type) {
 				case DataTypes::VOID_E: {
-					defaultValue = std::make_shared<DataTypeVoid>((this->parameters[i].defaultValue));
+					defaultValue = std::make_shared<DataTypeVoid>(DataTypeVoid());
 					break;
 				}
 				case DataTypes::NUM: {
-					defaultValue = std::make_shared<DataTypeNumber>((this->parameters[i].defaultValue));
+					defaultValue = std::make_shared<DataTypeNumber>(DataTypeNumber(this->parameters[i].defaultValue.getValue<long long>()));
 					break;
 				}
 				case DataTypes::STRING: {
-					defaultValue = std::make_shared<DataTypeString>((this->parameters[i].defaultValue));
+					defaultValue = std::make_shared<DataTypeString>(DataTypeString(this->parameters[i].defaultValue.getValue<std::string>()));
 					break;
 				}
 				default: {
-					defaultValue = std::make_shared<DataTypeVoid>((this->parameters[i].defaultValue));
+					defaultValue = std::make_shared<DataTypeVoid>(DataTypeVoid());
 					break;
 				}	
 			}
