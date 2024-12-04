@@ -7,6 +7,6 @@
 //Just stores info, doesn't actually call, calling is handled by ScriptEngine
 struct CallableAction {
 	std::shared_ptr<Action> action;
-	//CallableAction(const std::shared_ptr<Action>& action, const std::vector<Parameter> parameters);
+	std::vector<std::shared_ptr<DataType>> parameters;
 	CallableAction(const std::string& name, const std::vector<std::string>& parameters);
 };

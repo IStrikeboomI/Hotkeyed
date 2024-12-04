@@ -9,6 +9,8 @@ Add default values in optional parameters | Script reading | 5 | 9/23/2024
 Process other functions as parameters (nested functions) | Script Reading | 8 | 9/25/2024
 Check if function parameters work on seperate lines | Script reading | 2 | 9/26/2024
 When checking for actions, make sure it's a literal (not in a string) | Script reading | 6 | 9/26/2024
+Make sure hotkeys are not duplicates (either same character inside the hotkey or hotkeys with same characters) | Script reading | 3 | 12/4/2024
+
 
 Completed:
 Add general number parameter type | Script execution | 3 | 9/25/2024 | 10/16/2024

@@ -30,7 +30,7 @@ bool Script::isIndexInQuotations(int index) const {
 			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 std::pair<int, int> Script::getLineAndCharacterFromIndex(int index) const {
@@ -58,8 +58,6 @@ std::string Script::getTextFromTextBlock(const TextBlock& tb) const {
 }
 
 bool Script::isCallableAction(const std::string& text) const {
-	//it's a callable action
-	bool actionFound = false;
 	//All callable actions have a action name than an opening parentheses, parameters separated by a comma, then closing parentheses
 	for (std::shared_ptr<Action> a : ActionManager::getInstance().actions) {
 		//find action being used
@@ -70,7 +68,7 @@ bool Script::isCallableAction(const std::string& text) const {
 				int endParentheses = text.find(")");
 				//make sure closing parentheses exists
 				if (endParentheses != std::string::npos) {
-					actionFound = true;
+					return true;
 				}
 			}
 		}
@@ -82,7 +80,7 @@ void Script::addCallableAction(const std::string& text) {
 	//All callable actions have a action name than an opening parentheses, parameters separated by a comma, then closing parentheses
 	for (std::shared_ptr<Action> a : ActionManager::getInstance().actions) {
 		//find action being used
-		if (text.find(a->name)) {
+		if (text.find(a->name) != std::string::npos) {
 			int firstParentheses = text.find("(");
 			//make sure parentheses exists after the action name
 			if (firstParentheses != std::string::npos) {

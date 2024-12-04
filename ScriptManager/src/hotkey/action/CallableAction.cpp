@@ -1,6 +1,6 @@
 #include "CallableAction.h"
 
-//allableAction::CallableAction(const std::shared_ptr<Action>& action, const std::map<Parameter, std::any>& parameters) : action(action), parameters(parameters) {
+//CallableAction::CallableAction(const std::shared_ptr<Action>& action, const std::map<Parameter, std::any>& parameters) : action(action), parameters(parameters) {
 //}
 
 CallableAction::CallableAction(const std::string& name, const std::vector<std::string>& parameters) {
@@ -9,24 +9,27 @@ CallableAction::CallableAction(const std::string& name, const std::vector<std::s
 			this->action = a;
 		}
 	}
-	//See if provided parameters can work with the parameters that action expects
-	for (int i = 0; i < action->parameters.size();i++) {
-		Parameter expected = action->parameters[i];
-		if (!expected.optional) {
-			if (parameters.size() <= i) {
-				//TODO throw error here because provided parameters is smaller than expected
-			}
+	//Convert provided parameters into datatype for the action to use
+	std::vector<std::shared_ptr<DataType>> formattedParameters(parameters.size());
+	for (int i = 0; i < parameters.size();i++) {
+		std::shared_ptr<DataType> data = std::make_shared<DataTypeVoid>(DataTypeVoid());
+		if (this->action->parameters[i].type == DataTypes::NUM) {
+			data = std::make_shared<DataTypeNumber>(DataTypeNumber(parameters[i]));
 		}
-		std::any parameterValue = 0;
-		//if (expected.type == ParameterType::ANY || expected.type.empty()) {
-		//	parameterValue = parameters[i];
-		//}
-		//if (expected.type == ParameterType::STRING) {
-		//	parameterValue = parameters[i];
-		//}
-		//if (expected.type == ParameterType::NUM) {
-		//	parameterValue = BigFloat(parameters[i]);
-		//}
-		//this->parameters.emplace(expected, parameterValue);
+		if (this->action->parameters[i].type == DataTypes::STRING) {
+			data = std::make_shared<DataTypeString>(DataTypeString(parameters[i]));
+		}
+		formattedParameters[i] = data;
+		std::cout << parameters[i] << "\n";
 	}
+	this->action->fillOptionalParameters(formattedParameters);
+	//See if provided parameters can work with the parameters that action expects
+	if (this->action->areParametersValid(formattedParameters)) {
+		this->parameters = formattedParameters;
+		for (std::shared_ptr<DataType> d: this->parameters) {
+			//std::cout << d->value << "\n";
+		}
+	}
+	
+	
 }
