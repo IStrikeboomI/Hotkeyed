@@ -1,7 +1,7 @@
 #include "ActionMoveMouse.h"
 
 ActionMoveMouse::ActionMoveMouse() : Action("MoveMouse", DataTypes::VOID_E, {Parameter("x",DataTypes::NUM),
-											                                 Parameter("y",DataTypes::NUM)}, "Moves mouse cursor to (x,y)") {
+											                                 Parameter("y",DataTypes::NUM)}, "Moves mouse cursor to (x,y)",CATEGORY_MOUSE) {
 
 }
 

@@ -1,6 +1,6 @@
 #include "ActionPrint.h"
 
-ActionPrint::ActionPrint() : Action("Print", DataTypes::VOID_E, {Parameter("text",DataTypes::STRING)}) {
+ActionPrint::ActionPrint() : Action("Print", DataTypes::VOID_E, {Parameter("text",DataTypes::STRING)},CATEGORY_MISC | CATEGORY_DEBUG) {
 }
 
 std::shared_ptr<DataType> ActionPrint::execute(std::vector<std::shared_ptr<DataType>>& parameters) {
