@@ -17,13 +17,13 @@ private:
 
 public:
 	//This is the default constructor, which initializes a new BigFloat object to 0.
-	const BigFloat();
+	BigFloat();
 
 	//This constructor initializes a new BigFloat object from a long long integer.
-	const BigFloat(long long);
+	BigFloat(long long);
 
 	//This constructor initializes a new BigFloat object from a string.
-	const BigFloat(const std::string&);
+	BigFloat(const std::string&);
 
 	//This is the copy constructor, which initializes a new BigFloat object from an existing BigFloat object.
 	BigFloat(const BigFloat&);

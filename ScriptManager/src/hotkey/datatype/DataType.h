@@ -1,15 +1,15 @@
 #pragma once
 #include <string>
+//**_E stands for  enum because some are already defined by Windows.h
+
 enum DataTypes {
-	//VOID_E stands for void enum
-	//not VOID because that's already defined by Windows.h
 	VOID_E,
 	//represented as long long int
-	INTEGER,
+	INTEGER_E,
 	//represented as double
-	FLOAT,
+	FLOAT_E,
 	//represented as std::string
-	STRING
+	STRING_E
 };
 template <typename T>
 class DataTypeImpl;
@@ -17,8 +17,8 @@ class DataTypeImpl;
 struct DataType { 
 	virtual constexpr DataTypes getType() = 0;
 	template<typename T>
-	T* getData() const {
-		return static_cast<DataTypeImpl<T>*>(this);
+	const T* const getData() const {
+		return static_cast<const T* const>(this);
 	}
 };
 template <typename T>
