@@ -26,7 +26,7 @@ public:
 		   const DataTypes returnType = DataTypes::VOID_E,
 		   const std::vector<Parameter>& parameters = std::vector<Parameter>(),
 		   const std::string& description = "",
-		   const unsigned int actionCategories = 1);
+		   const unsigned int actionCategories = 0);
 	//checks if parameters passed into an action can match with the parameters needed
 	//checks by seeing if all non-optional parameters are passed and if all the parameters passed match the datatype
 	bool areParametersValid(const std::vector<std::shared_ptr<DataType>>& parameters) const;

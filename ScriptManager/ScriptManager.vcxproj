@@ -109,6 +109,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -124,6 +125,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +140,8 @@
     <ClCompile Include="src\hotkey\action\ActionRand.h" />
     <ClCompile Include="src\hotkey\action\CallableAction.cpp" />
     <ClCompile Include="src\hotkey\action\CallableAction.h" />
+    <ClCompile Include="src\hotkey\datatype\DataTypeFloat.h" />
+    <ClCompile Include="src\hotkey\datatype\DataTypeInteger.h" />
     <ClCompile Include="src\hotkey\datatype\DataTypeVoid.h" />
     <ClCompile Include="src\hotkey\ScriptFunction.cpp" />
     <ClCompile Include="src\hotkey\action\ActionPrint.cpp" />
@@ -150,7 +154,6 @@
     <ClCompile Include="src\ScriptManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\hotkey\datatype\DataTypeNumber.h" />
     <ClInclude Include="lib\BigFloat\BigFloat.h" />
     <ClInclude Include="src\hotkey\datatype\DataType.h" />
     <ClInclude Include="src\hotkey\datatype\DataTypeString.h" />

@@ -2,13 +2,14 @@
 #include "DataType.h"
 #include <string>
 #include <Util.h>
-#include "../../lib/BigFloat/BigFloat.h"
-class DataTypeString : public DataType {
+class DataTypeString : public DataTypeImpl<std::string> {
 public:
-	const DataTypeString(const std::string& text) : DataType(text) {};
-	const DataTypeString(const BigFloat& number) : DataType(number.toString()) {};
-	const DataTypeString(const long long number) : DataType(std::to_string(number)) {};
+	DataTypeString(const std::string& text) : DataTypeImpl(text) {};
+	DataTypeString(const long long number) : DataTypeImpl(std::to_string(number)) {};
 	constexpr DataTypes getType() override { return DataTypes::STRING; }
-	const std::any getDefaultValue() override { return ""; };
+	const std::string getDefaultValue() override { return ""; };
+
+	const bool isValid(const std::string& text) override { return true; };
+
 };
 

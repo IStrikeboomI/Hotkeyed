@@ -4,7 +4,6 @@
 #include "script/Script.h"
 #include "engine/ScriptEngine.h"
 #include "hotkey/parameter/Parameter.h"
-#include "hotkey/datatype/DataTypeNumber.h"
 int main() { 
     DeviceManager::getInstance().populate();
     Mapping mapping(std::filesystem::current_path().generic_string() + "/mapping.mapping");

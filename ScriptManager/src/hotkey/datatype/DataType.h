@@ -1,22 +1,31 @@
 #pragma once
-#include <any>
+#include <string>
 enum DataTypes {
 	//VOID_E stands for void enum
 	//not VOID because that's already defined by Windows.h
 	VOID_E,
-	//represented as BigFloat in the lib folder
-	NUM,
+	//represented as long long int
+	INTEGER,
+	//represented as double
+	FLOAT,
 	//represented as std::string
 	STRING
 };
-class DataType {	
-public:
-	std::any value = getDefaultValue();
-	DataType(const std::any& value) : value(value) {};
+template <typename T>
+class DataTypeImpl;
+//Below class is needed to use various datatypes in a vector, acts like a wildcard
+struct DataType { 
 	virtual constexpr DataTypes getType() = 0;
-	virtual const std::any getDefaultValue() = 0;
-	template <typename T>
-	const T getValue() const {
-		return std::any_cast<T>(this->value);
-	};
+	template<typename T>
+	T* getData() const {
+		return static_cast<DataTypeImpl<T>*>(this);
+	}
+};
+template <typename T>
+class DataTypeImpl : public DataType {	
+public:
+	T value;
+	DataTypeImpl(const T& value) : value(value) {};
+	virtual const T getDefaultValue() = 0;
+	virtual const bool isValid(const std::string& text) = 0;
 };

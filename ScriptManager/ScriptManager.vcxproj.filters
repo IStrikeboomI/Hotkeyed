@@ -60,6 +60,12 @@
     <ClCompile Include="src\hotkey\datatype\DataTypeVoid.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\hotkey\datatype\DataTypeInteger.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hotkey\datatype\DataTypeFloat.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\hotkey\action\Action.h">
@@ -96,9 +102,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\hotkey\datatype\DataType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\hotkey\datatype\DataTypeNumber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\hotkey\datatype\DataTypeString.h">

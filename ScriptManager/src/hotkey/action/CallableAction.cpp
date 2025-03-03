@@ -13,8 +13,11 @@ CallableAction::CallableAction(const std::string& name, const std::vector<std::s
 	std::vector<std::shared_ptr<DataType>> formattedParameters(parameters.size());
 	for (int i = 0; i < parameters.size();i++) {
 		std::shared_ptr<DataType> data = std::make_shared<DataTypeVoid>(DataTypeVoid());
-		if (this->action->parameters[i].type == DataTypes::NUM) {
-			data = std::make_shared<DataTypeNumber>(DataTypeNumber(parameters[i]));
+		if (this->action->parameters[i].type == DataTypes::INTEGER) {
+			data = std::make_shared<DataTypeInteger>(DataTypeInteger(parameters[i]));
+		}  
+		if (this->action->parameters[i].type == DataTypes::FLOAT) {
+			data = std::make_shared<DataTypeFloat>(DataTypeFloat(parameters[i]));
 		}
 		if (this->action->parameters[i].type == DataTypes::STRING) {
 			data = std::make_shared<DataTypeString>(DataTypeString(parameters[i]));
